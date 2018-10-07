@@ -24,66 +24,58 @@ class UserAttendancesController extends AppController
         $this->loadModel('Categories');
     }
 	
-	public function index()
-	{
-	    $userArr = array();
-	    $this->loadModel('Users');
-		 
-		   $id = $this->request->session()->read('Auth.User.id');
-		   $all_ids = $this->getChildren($id);
-		   if(!empty($all_ids)){
-			  $all_ids_str = implode(",",$all_ids);
-		   }else{
-			  $all_ids_str = "";
-		   }
+    public function index()
+    {
+        $userArr = array();
+        $this->loadModel('Users');
+		
+		  $id = $this->request->session()->read('Auth.User.id');
+		  $all_ids = $this->getChildren($id);
+		  if(!empty($all_ids)){
+			 $all_ids_str = implode(",",$all_ids);
+		  }else{
+			 $all_ids_str = "";
+		  }
 		if($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS){
 		   $this->paginate = array(
-			 'fields'=>array('id','username'),
-			 'order' => array('username' => 'asc'),
-			 'recursive' => -1
-			);
+                'fields'=>array('id','username'),
+                'order' => array('username' => 'asc'),
+                'recursive' => -1
+		     );
 		}else{
 		  if(!empty($all_ids_str)){
 			   $this->paginate = array(
 					'conditions' => array('id IN' => $all_ids),
-			 'fields'=>array('id','username'),
-			 'order' => array('username' => 'asc'),
-			 'recursive' => -1
-			);	   
+                'fields'=>array('id','username'),
+                'order' => array('username' => 'asc'),
+                'recursive' => -1
+		     );	   
 		  }else{
 			   $this->paginate = array(
-			 'fields'=>array('id','username'),
-			 'order' => array('username' => 'asc'),
-			 'recursive' => -1
-			);
+                'fields'=>array('id','username'),
+                'order' => array('username' => 'asc'),
+                'recursive' => -1
+		     );
 		  }
 		}
-		
-		if(SPECIAL_USER == 0){
-			if(!array_key_exists('conditions',$this->paginate)){
-				$this->paginate['conditions']['username NOT LIKE'] = 'dr5%';
-			}else{
-				$this->paginate['conditions']['OR']['username NOT LIKE'] = 'dr5%';
-			}
-			
+		  
+         
+        $users = $this->paginate($this->Users);
+        foreach($users as $user){
+					$userArr[] = array(
+										'id' => $user->id,
+										'username' => $user->username,
+										'hours' => $this->get_current_day_hour($user->id),
+										'Days' => $this->get_current_days($user->id)
+									   );
 		}
-		
-		$users = $this->paginate($this->Users);
-	    foreach($users as $user){
-					 $userArr[] = array(
-										 'id' => $user->id,
-										 'username' => $user->username,
-										 'hours' => $this->get_current_day_hour($user->id),
-										 'Days' => $this->get_current_days($user->id)
-									    );
-		 }
-	    $usersname = $this->Users->find('list',array(
-														 'fields'=>array('id','username'),
-														 'recursive' => -1,
-														 ));
-		 $this->set(compact( 'userArr','username' ));
-	    //$this->set('_serialize', ['users']);
-	}
+        $usersname = $this->Users->find('list',array(
+														'fields'=>array('id','username'),
+														'recursive' => -1,
+														));
+		$this->set(compact( 'userArr','username' ));
+        //$this->set('_serialize', ['users']);
+    }
     
     
     private function get_current_day_hour($userID = ''){
@@ -1198,9 +1190,6 @@ class UserAttendancesController extends AppController
 		  
 		  
 		$conditionArr = $this->generate_condition_array();
-		if(SPECIAL_USER == 0){
-			$conditionArr['username NOT LIKE'] = 'dr5%';
-		}
 		if(array_key_exists('month',$this->request->query['month'])){
 			$month = $this->request->query['month']['month'];
 		}
@@ -1220,45 +1209,22 @@ class UserAttendancesController extends AppController
 		$userArr = array();
         if(empty($searchKW)&& empty($month)){
 		  if($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS){
-			if(SPECIAL_USER == 0){
-				$users_query = $this->Users->find('all',array(
-												'fields'=>array('id','username'),
-												'conditions' => array('username NOT LIKE' => 'dr5%')
-												));
-				
-			}else{
-				$users_query = $this->Users->find('all',array(
-												'fields'=>array('id','username'),
-												'recursive' => -1
-												));	
-			}
-			
-		  }else{
-			   if(!empty($all_ids)){
-					if(SPECIAL_USER == 0){
-						$users_query = $this->Users->find('all',array(
-															'conditions' => ['id IN' =>  $all_ids,
-																		  'username NOT LIKE' => 'dr5%'],
-															 'fields'=>array('id','username')
-															 ));
-					}else{
-						$users_query = $this->Users->find('all',array(
-															'conditions' => ['id IN' =>  $all_ids],
-															 'fields'=>array('id','username')
-															 ));
-					}
-			   }else{
-					if(SPECIAL_USER == 0){
-						$users_query = $this->Users->find('all',array(
-															 'fields'=>array('id','username'),
-															 'conditions' => array('username NOT LIKE'=> 'dr5%')
-															 ));
-					}else{
-						$users_query = $this->Users->find('all',array(
+			   $users_query = $this->Users->find('all',array(
 															 'fields'=>array('id','username'),
 															 'recursive' => -1
 															 ));
-					}
+		  }else{
+			   if(!empty($all_ids)){
+					$users_query = $this->Users->find('all',array(
+															'conditions' => ['id IN' =>  $all_ids],
+															 'fields'=>array('id','username'),
+															 'recursive' => -1
+															 ));   
+			   }else{
+					$users_query = $this->Users->find('all',array(
+															 'fields'=>array('id','username'),
+															 'recursive' => -1
+															 ));
 			   }   
 		  }
 		  
@@ -1282,7 +1248,8 @@ class UserAttendancesController extends AppController
 			if(!empty($searchKW) && empty($month) ){
 				$users_query = $this->Users->find('all',array(
 															'fields'=>array('id','username'),
-															 'conditions' => $conditionArr 
+															 'conditions' => $conditionArr ,
+															'recursive' => -1
 															));
 				$users_query = $users_query->hydrate(false);
 				if(!empty($users_query)){
