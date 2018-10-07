@@ -765,9 +765,13 @@ class AppController extends Controller
 					}elseif($operations == "+"){
 						
                         if(preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser) && $is_special==1){
+                            $kioskName = "";
+                            if(array_key_exists($kiosk_id, $kiosk_name)){
+                              $kioskName = str_replace("'","",$kiosk_name[$kiosk_id]);
+                            }
                             $insert_query = "INSERT INTO `product_sell_stats_new` SET
                                                                         `kiosk_id` = $kiosk_id,
-                                                                        `kiosk_name` = '".str_replace("'","",$kiosk_name[$kiosk_id])."',
+                                                                        `kiosk_name` = '".$kioskName."',
                                                                         `product_id` = $prduct_id,
                                                                         `product_code` = '".str_replace("'","",$product_code)."',
                                                                         `cost_price` = $actual_cost_price,
