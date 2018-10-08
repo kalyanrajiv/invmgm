@@ -73,7 +73,7 @@ class HomeController extends AppController{
 			   $agents = array();
 		}
 		$this->set(compact('agents'));
-		$vat = 20;
+        $vat = isset($this->setting['vat']) && !empty($this->setting['vat']) ? $this->setting['vat'] : 0;
 		//$customer = $this->Customers->find('all', array(
 		//												 'conditions' => array('id' => (int)$customerID),
 		//												 'recursive' => -1,
@@ -7804,7 +7804,7 @@ class HomeController extends AppController{
 		
 		
 		//pr($this->request);
-        $vat = 20;
+        $vat = isset($this->setting['vat']) && !empty($this->setting['vat']) ? $this->setting['vat'] : 0;
 		$customer_query = $this->Customers->find('all', array(
 														 'conditions' => array('id' => (int)$customerID),
 														 'recursive' => -1,
@@ -9116,7 +9116,7 @@ class HomeController extends AppController{
 		$this->set(compact('agents'));
 		
 		//pr($this->request);
-         $vat = 20;
+        $vat = isset($this->setting['vat']) && !empty($this->setting['vat']) ? $this->setting['vat'] : 0;
         $customer_query = $this->Customers->find('all', array(
 														 'conditions' => array('id' => (int)$customerID),
 														 'recursive' => -1,
@@ -10965,7 +10965,7 @@ class HomeController extends AppController{
 		$this->set(compact('agents'));
 		
 		//pr($this->request);
-         $vat = 20;
+        $vat = isset($this->setting['vat']) && !empty($this->setting['vat']) ? $this->setting['vat'] : 0;
         $customer_query = $this->Customers->find('all', array(
 														 'conditions' => array('id' => (int)$customerID),
 														 'recursive' => -1,

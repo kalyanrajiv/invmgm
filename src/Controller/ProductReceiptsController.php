@@ -11099,7 +11099,7 @@ class ProductReceiptsController extends AppController
         //Eng: Get Credit Note receipts
         
 		$conditions = str_replace("cr","pr",$conditions);
-        $invQry = "SELECT *,`pr`.`created` as `recpt_date`, `pd`.modified as `pmt_date` FROM `$productReceiptSource` as `pr`, `$paymentDetailSource` as `pd` WHERE `pr`.`id` = `pd`.`product_receipt_id` AND  `pr`.`customer_id` = $custId".$conditions;//echo $invQry."<br/>";
+        $invQry = "SELECT *,`pr`.`created` as `recpt_date`, `pd`.created as `pmt_date` FROM `$productReceiptSource` as `pr`, `$paymentDetailSource` as `pd` WHERE `pr`.`id` = `pd`.`product_receipt_id` AND  `pr`.`customer_id` = $custId".$conditions;//echo $invQry."<br/>";
         //`pd`.`payment_method` <> 'On Credit' AND 
 		$stmt_pr = $conn->execute($invQry); 
         $prRecptData = $stmt_pr ->fetchAll('assoc');
