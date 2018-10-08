@@ -11558,7 +11558,8 @@ class ProductReceiptsController extends AppController
 		}
 		
 		if(array_key_exists("date",$this->request->query) && !empty($this->request->query['date'])){
-			$date = $this->request->query['date'];
+            $time = date("h:i:s");
+			$date = $this->request->query['date'].' '.$time;
 		}else{
 			$date = "";
 		}
