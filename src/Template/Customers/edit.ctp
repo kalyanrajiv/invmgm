@@ -61,6 +61,9 @@
 			echo "<td>".$this->Form->input('memo',array('id' => 'Memo'))."</td>";
 			echo "<td>".$this->Form->input('agent_id',array('options'=>$agents,"style"=>"width: 163px;",'label'=>'Select Acc manager'));
 			echo "<span style='float: right;text-align: right;width: 305px;'><b>**changing agent_id will trasnfer all previous sale of this customer to new agent in all kiosks including wholesale store</b></span>";
+			echo "<tr>";
+			echo"<td>".$this->Form->input('status',['options' => $active,'type' => 'select'])."</td>";
+			echo "</tr>";
 			//print_r($this->request['data']);
 			//echo $this->request['data']['Customer']['same_delivery_address'];
 			

@@ -54,7 +54,7 @@
 				<th scope="col"><?= $this->Paginator->sort('country') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('state') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('Account Manager') ?></th>
-               
+                <th scope="col"><?= $this->Paginator->sort('Status') ?></th>
             </tr>
         </thead>
         <tbody>
@@ -114,7 +114,7 @@
 						}
       
 					} //pr($customer);?></td>
-                 
+     <td><?= h($active[$customer->status]) ?></td>                 
               
                
             </tr>

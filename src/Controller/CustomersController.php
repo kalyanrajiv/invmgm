@@ -15,6 +15,7 @@ class CustomersController extends AppController{
     public function initialize()
     {
         parent::initialize();
+        $active = Configure::read('active');
         $this->loadModel('MobileRepairs');
         $this->loadModel('MobileUnlocks');
         $this->loadModel('MobileReSales');
@@ -24,7 +25,7 @@ class CustomersController extends AppController{
 		$this->loadModel('CustomerProductPrice');
 	   $this->loadModel('Agents');
 		$countryOptions = Configure::read('uk_non_uk');
-		$this->set(compact('countryOptions'));
+		$this->set(compact('countryOptions', 'active'));
 		
     }
 
