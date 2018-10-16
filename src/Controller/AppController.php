@@ -622,7 +622,7 @@ class AppController extends Controller
                                                                         `product_code` = '".str_replace("'","",$product_code)."',
                                                                         `cost_price` = -1*$actual_cost_price,
                                                                         `selling_price` = -1*$selling_price,
-                                                                        `quantity` = -1*$quantity,
+																		`quantity` = -1*$quantity,
                                                                         `category_id` = $cat_id[$prduct_id],
                                                                          `status` = 1,
                                                                         `created` = '$current_date'";
@@ -632,11 +632,11 @@ class AppController extends Controller
                                                                         `product_code` = '".str_replace("'","",$product_code)."',
                                                                         `cost_price` = -1*$actual_cost_price,
                                                                         `selling_price` = -1*$selling_price,
-                                                                        `quantity` = -1*$quantity,
+																		`quantity` = -1*$quantity,
                                                                         `vat` = -1*$vat,
                                                                         `status` = 0,
                                                                         `category_id` = $cat_id[$prduct_id],
-                                                                        `bulk_invoice` = $bulk_invoice,
+																		`bulk_invoice` = $bulk_invoice,
                                                                         `created` = '$current_date'";
                         }
 					}elseif($operations == "+"){
@@ -646,7 +646,7 @@ class AppController extends Controller
                                                                         `product_code` = '".str_replace("'","",$product_code)."',
                                                                         `cost_price` = $actual_cost_price,
                                                                         `selling_price` = $selling_price,
-                                                                        `quantity` = $quantity,
+																		`quantity` = $quantity,
                                                                         `status` = 1,
                                                                         `category_id` = $cat_id[$prduct_id],
                                                                         `created` = '$current_date'";
@@ -656,11 +656,11 @@ class AppController extends Controller
                                                                         `product_code` = '".str_replace("'","",$product_code)."',
                                                                         `cost_price` = $actual_cost_price,
                                                                         `selling_price` = $selling_price,
-                                                                        `quantity` = $quantity,
+																		`quantity` = $quantity,
                                                                         `vat` = $vat,
                                                                         `status` = 0,
                                                                         `category_id` = $cat_id[$prduct_id],
-                                                                        `bulk_invoice` = $bulk_invoice,
+																		`bulk_invoice` = $bulk_invoice,
                                                                         `created` = '$current_date'";
                         }
 					}
@@ -738,10 +738,12 @@ class AppController extends Controller
                                                                         `product_code` = '".str_replace("'","",$product_code)."',
                                                                         `cost_price` = -1*$actual_cost_price,
                                                                         `selling_price` = -1*$selling_price,
-                                                                        `quantity` = -1*$quantity,
+																		`quantity` = -1*$quantity,
+                                                                        
                                                                         `category_id` = $cat_id[$prduct_id],
                                                                         `status` = 1,
                                                                         `created` = '$current_date'
+                                                                        
                                                                         ";	
                         }else{
                             $insert_query = "INSERT INTO `product_sell_stats_new` SET
@@ -751,56 +753,48 @@ class AppController extends Controller
                                                                         `product_code` = '".str_replace("'","",$product_code)."',
                                                                         `cost_price` = -1*$actual_cost_price,
                                                                         `selling_price` = -1*$selling_price,
-                                                                        `quantity` = -1*$quantity,
+																		`quantity` = -1*$quantity,
                                                                         `vat` = -1*$vat,
                                                                         `category_id` = $cat_id[$prduct_id],
                                                                         `status` = 0,
                                                                         `created` = '$current_date',
-                                                                        `bulk_invoice` = $bulk_invoice
+																		`bulk_invoice` = $bulk_invoice
                                                                         ";	
                         }
 						 
-                        }elseif($operations == "+"){
+					}elseif($operations == "+"){
 						
-                          if(preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser) && $is_special==1){
-                             $kioskName = "";
-                              if(array_key_exists($kiosk_id, $kiosk_name)){
-                                $kioskName = str_replace("'","",$kiosk_name[$kiosk_id]);
-                              }
-                              $insert_query = "INSERT INTO `product_sell_stats_new` SET
-                                                                          `kiosk_id` = $kiosk_id,
-                                                                          `kiosk_name` = '".$kioskName."',
-                                                                          `product_id` = $prduct_id,
-                                                                          `product_code` = '".str_replace("'","",$product_code)."',
-                                                                          `cost_price` = $actual_cost_price,
-                                                                          `selling_price` = $selling_price,
-                                                                          `quantity` = $quantity,
-                                                                          `status` = 1,
-                                                                          `category_id` = $cat_id[$prduct_id],
-                                                                          `created` = '$current_date'
-                                                                          ";
-                          }else{
-                            $kioskName = "";
-                            if(array_key_exists($kiosk_id, $kiosk_name)){
-                              $kioskName = str_replace("'","",$kiosk_name[$kiosk_id]);
-                            }
-                              $insert_query = "INSERT INTO `product_sell_stats_new` SET
-                                                                          `kiosk_id` = $kiosk_id,
-                                                                          `kiosk_name` = '".$kioskName."',
-                                                                          `product_id` = $prduct_id,
-                                                                          `product_code` = '".str_replace("'","",$product_code)."',
-                                                                          `cost_price` = $actual_cost_price,
-                                                                          `selling_price` = $selling_price,
-                                                                          `quantity` = $quantity,
-                                                                          `vat` = $vat,
-                                                                          `status` = 0,
-                                                                          `category_id` = $cat_id[$prduct_id],
-                                                                          `created` = '$current_date',
-                                                                          `bulk_invoice` = $bulk_invoice
-                                                                          ";
-                          }
+                        if(preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser) && $is_special==1){
+                            $insert_query = "INSERT INTO `product_sell_stats_new` SET
+                                                                        `kiosk_id` = $kiosk_id,
+                                                                        `kiosk_name` = '".str_replace("'","",$kiosk_name[$kiosk_id])."',
+                                                                        `product_id` = $prduct_id,
+                                                                        `product_code` = '".str_replace("'","",$product_code)."',
+                                                                        `cost_price` = $actual_cost_price,
+                                                                        `selling_price` = $selling_price,
+																		`quantity` = $quantity,
+                                                                        `status` = 1,
+                                                                        `category_id` = $cat_id[$prduct_id],
+                                                                        `created` = '$current_date'
+                                                                        ";
+                        }else{
+                            $insert_query = "INSERT INTO `product_sell_stats_new` SET
+                                                                        `kiosk_id` = $kiosk_id,
+                                                                        `kiosk_name` = '".str_replace("'","",$kiosk_name[$kiosk_id])."',
+                                                                        `product_id` = $prduct_id,
+                                                                        `product_code` = '".str_replace("'","",$product_code)."',
+                                                                        `cost_price` = $actual_cost_price,
+                                                                        `selling_price` = $selling_price,
+																		`quantity` = $quantity,
+                                                                        `vat` = $vat,
+                                                                        `status` = 0,
+                                                                        `category_id` = $cat_id[$prduct_id],
+                                                                        `created` = '$current_date',
+																		`bulk_invoice` = $bulk_invoice
+                                                                        ";
+                        }
 						
-                    }
+					}
                     $stmt = $conn->execute($insert_query);
                     //$this->ProductSellStat->query($insert_query);
                     return true;

@@ -4326,10 +4326,12 @@ $counter = 0;
 		if(empty($trnsfrdByKioskOrderIds)){
             $trnsfrdByKioskOrderIds = array(0 => null);
         }
+		
 		$checkIfBelong2Kiosk_query = $KioskOrdersTable->find('list',[
                                                                'keyField' => 'id',
                                                                'valueField' => 'id',
-                                                               'conditions'=>['kiosk_id'=>$selectedKiosk, 'id IN'=>$trnsfrdByKioskOrderIds,
+                                                               'conditions'=>['kiosk_id'=>$selectedKiosk, //'id IN'=>$trnsfrdByKioskOrderIds,
+																			  "Date(received_on)>'$startDate'","Date(received_on)<'$endDate'",
 																			  'status' => 2
 																			  ],
                                                                //'recursive'=>-1
@@ -5052,7 +5054,9 @@ $counter = 0;
 		$checkIfBelong2Kiosk = $KioskOrdersTable->find('list',[
                                                                'keyField' => 'id',
                                                                'valueField' => 'id',
-                                                               'conditions'=>['kiosk_id'=>$selectedKiosk, 'id IN'=>$trnsfrdByKioskOrderIds],
+                                                               'conditions'=>['kiosk_id'=>$selectedKiosk, //'id IN'=>$trnsfrdByKioskOrderIds
+																			  "Date(received_on)>'$startDate'","Date(received_on)<'$endDate'"
+																			  ],
                                                                //'recursive'=>-1
                                                               ]
                                                        );

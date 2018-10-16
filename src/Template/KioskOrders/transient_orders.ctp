@@ -35,6 +35,9 @@ use Cake\I18n\Time;
 	$webRoot = $this->request->webroot."KioskOrders/transient_orders_search";
 	echo $this->Form->create('kiosk_orders',array('url' => $webRoot,'type' => 'get'));
 ?>
+
+<?php $update_kiosk = $this->Url->build(['controller' => 'kiosk-orders', 'action' => 'change_transient_order_kiosk'],true);?>
+	<input type='hidden' name='update_kiosk' id='update_kiosk' value='<?=$update_kiosk?>' />
 <div class="search_div">
 	<fieldset>
   <legend>Search</legend>
@@ -336,8 +339,37 @@ use Cake\I18n\Time;
 			<?php if ($this->request->session()->read('Auth.User.group_id') == KIOSK_USERS ||
 				  $this->request->session()->read('Auth.User.group_id') == REPAIR_TECHNICIANS): ?>
 			<?php echo $this->Html->link(__('Receive Order'), array('controller' => 'kiosk_orders','action' => 'receive_order', $kioskOrder['id']),array('id'=>'receive_loading')); ?>
-			<?php endif; ?>			
+			<?php endif; ?>
+			<?php if($this->request->session()->read('Auth.User.username') == SPL_PRIVILEGE_USER){?>
+			<div style="display: flex;">
+				<div id = "change_kiosk_div_<?php echo $kioskOrder->id;?>">
+						<input type="button" id="change_kiosk" name="change_kiosk" style="background-image: -moz-linear-gradient(top, #fefefe, #dcdcdc);width: 116px;border: 1px solid #bbb;border-radius: 4px;text-shadow: #fff 0px 1px 0px;" value="Change Kiosk"/>
+				</div>
+				<div id = "change_kiosk_submit_div_<?php echo $kioskOrder->id;?>">
+				<?php
+					$change_kiosk_dropdown = $kiosks;
+					if(array_key_exists($kioskOrder->kiosk_id,$kiosks)){
+						unset($change_kiosk_dropdown[$kioskOrder->kiosk_id]);
+					}
+					if(array_key_exists(10000,$kiosks)){
+						unset($change_kiosk_dropdown[10000]);
+					}
+					echo $this->Form->input(null, array(
+															'options' => $change_kiosk_dropdown,
+															'div' => false,
+															'id'=> 'kioskid_'.$kioskOrder->id,
+															'name' => 'KioskOrder[kiosk_id]',
+															'empty' => 'Select Kiosk',
+															'style' => 'width:170px;margin-top: 12px;'
+														)
+													);
+				?>
+				<input type="button" id="change_kiosk_submit_<?php echo $kioskOrder->id;?>" name="change_kiosk_submit" style="background-image: -moz-linear-gradient(top, #fefefe, #dcdcdc);width: 116px;border: 1px solid #bbb;border-radius: 4px;text-shadow: #fff 0px 1px 0px;" value="Submit"/>
+				</div>
+			</div>
+			<?php } ?>
 		</td>
+		
 	</tr>
 <?php endforeach; ?>
 	</tbody>
@@ -367,6 +399,80 @@ use Cake\I18n\Time;
 		$.blockUI({ message: 'Just a moment...' });
 	});
 </script>
+
+<script>
+	$(document).ready(function() {
+		<?php foreach($kioskOrders as $kioskOrder){ ?>
+				$("#change_kiosk_submit_div_"+"<?php echo $kioskOrder->id ?>").hide();
+		<?php } ?>
+	});
+	<?php foreach($kioskOrders as $kioskOrder){ ?>
+				$("#change_kiosk_div_"+"<?php echo $kioskOrder->id ?>").click(function(){
+					$("#change_kiosk_submit_div_"+"<?php echo $kioskOrder->id ?>").show();
+					$("#change_kiosk_div_"+"<?php echo $kioskOrder->id ?>").hide();
+					var current_id = <?php echo $kioskOrder->id; ?>;
+					hide_other(current_id);
+					});
+		<?php } ?>
+		
+		function hide_other(id) {
+            <?php
+				foreach($kioskOrders as $kioskOrder){ ?>
+					var current_id = <?php echo $kioskOrder->id; ?>;
+					if (current_id != id) {
+						$("#change_kiosk_div_"+"<?php echo $kioskOrder->id ?>").show();
+	                    $("#change_kiosk_submit_div_"+"<?php echo $kioskOrder->id; ?>").hide();
+	                }
+			<?php } ?>
+        }
+		
+		<?php foreach($kioskOrders as $kioskOrder){ ?>
+				$("#change_kiosk_submit_"+"<?php echo $kioskOrder->id ?>").click(function(){
+					if (confirm("Are You Sure")) {
+							var selected_kiosk_id = $("#kioskid_"+"<?php echo $kioskOrder->id ?>").val();
+							if (selected_kiosk_id == "") {
+								alert("Please Choose Kiosk");
+								return false;
+							}
+							var order_id = <?php echo $kioskOrder->id; ?>;
+							if (order_id == "") {
+								alert("No order id Found");
+								return false;
+							}
+							
+							var kiosk_placed_order_id = <?php if(empty($kioskOrder->kiosk_placed_order_id)){ echo "''";}else{echo $kioskOrder->kiosk_placed_order_id;} ?>;
+							
+							targeturl = $("#update_kiosk").val();
+							//targeturl += "?order_id="+order_id;
+							//targeturl += "&selected_kiosk_id="+selected_kiosk_id;
+							
+							
+							$.blockUI({ message: 'Just a moment...' });
+							$.ajax({
+								type: 'post',
+								url: targeturl,
+								data: { order_id: order_id, selected_kiosk_id : selected_kiosk_id, kiosk_placed_order_id : kiosk_placed_order_id } ,
+								beforeSend: function(xhr) {
+									xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+								},
+								success: function(response) {
+									
+									var objArr = $.parseJSON(response);
+									alert(objArr.msg);
+									location.reload();
+								},
+								error: function(e) {
+									$.unblockUI();
+									alert("An error occurred: " + e.responseText.message);
+									console.log(e);
+								}
+							});
+					}
+				});
+		<?php } ?>
+		
+</script>
+
 <script>
 $(function() {
   $( document ).tooltip({
