@@ -68,7 +68,7 @@
 			<li><?php echo $this->Html->link(__('Kiosk Products'), array('plugin' => null,'controller' => 'products', 'action' => 'export_kiosk_products'));?></li>
 		 </ul>
 	 </li>
-	 <li><a href="http://<?php echo ADMIN_DOMAIN;?>/cpafter/cp_images_2_mbwaheguru.php" id="cpy_img" >Copy Imgs 2 Ram</a></li>
+	 <li><a href="<?php echo URL_SCHEME.ADMIN_DOMAIN;?>/cpafter/cp_images_2_mbwaheguru.php" id="cpy_img" >Copy Imgs 2 Ram</a></li>
       </ul>
    </li>
    
