@@ -206,7 +206,9 @@ use Cake\I18n\Time;
 		?>&nbsp;</td>
 		<td><?php
 		//if(array_key_exists($receipt_id,$creditReceiptData)){
-			echo h($creditReceiptData[$creditPaymentDetail->credit_receipt_id]['customer_id'])."[".$customerAgent[$creditReceiptData[$creditPaymentDetail->credit_receipt_id]['customer_id']]."]";
+			if(is_array($creditReceiptData[$creditPaymentDetail->credit_receipt_id])){
+				echo h($creditReceiptData[$creditPaymentDetail->credit_receipt_id]['customer_id'])."[".$customerAgent[$creditReceiptData[$creditPaymentDetail->credit_receipt_id]['customer_id']]."]";
+			}
 		//}
 			?>&nbsp;</td>
 		<td><?php echo $creditReceiptData[$creditPaymentDetail->credit_receipt_id]['bill_cost'];?></td>
@@ -232,29 +234,47 @@ use Cake\I18n\Time;
 			if($t_searched == 1){
 			 
 				if($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS || $this->request->session()->read('Auth.User.group_id') == FRANCHISE_OWNER || $this->request->session()->read('Auth.User.group_id') == SALESMAN || $this->request->session()->read('Auth.User.group_id') == inventory_manager){
-					 echo $this->Html->link($viewImgHTML, array('action' => 't_view', $creditPaymentDetail->credit_receipt_id), array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+					if(!empty($creditPaymentDetail->credit_receipt_id)){
+						echo $this->Html->link($viewImgHTML, array('action' => 't_view', $creditPaymentDetail->credit_receipt_id), array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+					}else{
+						echo $this->Html->link($viewImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+					}
 					// echo $this->Html->link(__('View'), array('action' => 't_view', $creditPaymentDetail['CreditReceipt']['id']));
 					 echo $this->Html->link($pmtImgHTML, array('action' => 't_update_credit_payment', $creditPaymentDetail->id), array('escapeTitle' => false, 'title' => 'Update Payment', 'alt' => 'Update Payment'));
 					//  echo $this->Html->link(__('Update Payment'), array('action' => 't_update_credit_payment', $creditPaymentDetail['CreditPaymentDetail']['id']));
 					
-					echo $this->Html->link($custChngImgHTML, array('action' => 'dr_change_customer', $creditPaymentDetail->credit_receipt_id), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer','confirm' => 'Are you sure you want to change customer?'));
+					if(!empty($creditPaymentDetail->credit_receipt_id)){
+						echo $this->Html->link($custChngImgHTML, array('action' => 'dr_change_customer', $creditPaymentDetail->credit_receipt_id), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer','confirm' => 'Are you sure you want to change customer?'));
+						echo $this->Html->link($invChngImgHTML, array('action' => 'special_to_orig', $creditPaymentDetail->credit_receipt_id,$kiosk_id), array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit Quotation to Credit note?'));
+					}else{
+						echo $this->Html->link($custChngImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer'));
+						echo $this->Html->link($invChngImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit'));
+					}
 					
 					
 					  //echo $this->Html->link( $custChngImgHTML, array('action' => 'dr_change_customer', $creditPaymentDetail['CreditReceipt']['id']), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer')); 
 					  //echo $this->Html->link(__('Change Customer'), array('action' => 'dr_change_customer', $creditPaymentDetail['CreditReceipt']['id']));
 					  //echo $this->Html->link(__('Change Invoice'), array('action' => 'special_to_orig', $creditPaymentDetail['CreditReceipt']['id']));
-					  echo $this->Html->link($invChngImgHTML, array('action' => 'special_to_orig', $creditPaymentDetail->credit_receipt_id,$kiosk_id), array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit Quotation to Credit note?'));
+					  
 					//  echo $this->Html->link(__('Chng 2 Cred Inv'), array('action' => 'special_to_orig', $creditPaymentDetail['CreditReceipt']['id'],$kiosk_id),array('title' => 'Change to Credit Invoice','confirm' => 'Are you sure you want to change Credit Quotation to Credit Invoice?'));
 					  	//echo $this->Html->link('Change Invoice', array('action' => 'org_to_special', $creditPaymentDetail['CreditPaymentDetail']['id']));
 					  
 				}else{
-                     
-					  echo $this->Html->link($viewImgHTML, array('action' => 't_view', $creditPaymentDetail->credit_receipt_id), array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+                     if(!empty($creditPaymentDetail->credit_receipt_id)){
+						echo $this->Html->link($viewImgHTML, array('action' => 't_view', $creditPaymentDetail->credit_receipt_id), array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+					 }else{
+						echo $this->Html->link($viewImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+					 }
 					 //echo $this->Html->link(__('View'), array('action' => 't_view', $creditPaymentDetail['CreditReceipt']['id']));
 					 echo $this->Html->link($pmtImgHTML, array('action' => 't_update_credit_payment', $creditPaymentDetail->id), array('escapeTitle' => false, 'title' => 'Update Payment', 'alt' => 'Update Payment'));
 					 // echo $this->Html->link(__('Update Payment'), array('action' => 't_update_credit_payment', $creditPaymentDetail['CreditPaymentDetail']['id']));
-					 echo $this->Html->link($invChngImgHTML, array('action' => 'special_to_orig', $creditPaymentDetail->credit_receipt_id), array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit Quotation to Credit note?'));
-					 echo $this->Html->link($custChngImgHTML, array('action' => 'dr_change_customer', $creditPaymentDetail->credit_receipt_id), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer','confirm' => 'Are you sure you want to change customer?'));
+					 if(!empty($creditPaymentDetail->credit_receipt_id)){
+						echo $this->Html->link($invChngImgHTML, array('action' => 'special_to_orig', $creditPaymentDetail->credit_receipt_id), array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit Quotation to Credit note?'));
+						echo $this->Html->link($custChngImgHTML, array('action' => 'dr_change_customer', $creditPaymentDetail->credit_receipt_id), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer','confirm' => 'Are you sure you want to change customer?'));
+					 }else{
+						echo $this->Html->link($custChngImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer'));
+						echo $this->Html->link($invChngImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit'));
+					 }
 					 
 					 // echo $this->Html->link(__('Chng 2 Cred Inv'), array('action' => 'special_to_orig', $creditPaymentDetail['CreditReceipt']['id']),array('title' => 'Change to Credit Invoice','confirm' => 'Are you sure you want to change Credit Quotation to Credit Invoice?'));
 					  //echo $this->Html->link(__('Change Customer'), array('action' => 'change_customer', $creditPaymentDetail['CreditPaymentDetail']['id']));
@@ -267,47 +287,78 @@ use Cake\I18n\Time;
 					if($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS || $this->request->session()->read('Auth.User.group_id') == FRANCHISE_OWNER || $this->request->session()->read('Auth.User.group_id') == SALESMAN || $this->request->session()->read('Auth.User.group_id') == inventory_manager){
 						$loggedInUser = $this->request->session()->read('Auth.User.username');
 						if($kiosk_id == 10000){
-                             
-							 echo $this->Html->link($viewImgHTML, array('action' => 'view', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+                             if(!empty( $creditReceiptData[$receipt_id]['id'] )){
+								echo $this->Html->link($viewImgHTML, array('action' => 'view', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+							 }else{
+								echo $this->Html->link($viewImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+							 }
 							//echo $this->Html->link(__('View'), array('action' => 'view', $creditPaymentDetail['CreditReceipt']['id'])); 
 							echo $this->Html->link($pmtImgHTML, array('action' => 'update_credit_payment', $creditPaymentDetail->id), array('escapeTitle' => false, 'title' => 'Update Payment', 'alt' => 'Update Payment'));
 							//echo $this->Html->link(__('Update Payment'), array('action' => 'update_credit_payment', $creditPaymentDetail['CreditPaymentDetail']['id']));
 							
-							echo $this->Html->link($custChngImgHTML, array('action' => 'change_customer', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer','confirm' => 'Are you sure you want to change customer?'));
+							if(!empty( $creditReceiptData[$receipt_id]['id'] )){
+								echo $this->Html->link($custChngImgHTML, array('action' => 'change_customer', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer','confirm' => 'Are you sure you want to change customer?'));
+								if (preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser)){
+									echo $this->Html->link($invChngImgHTML, array('action' => 'org_to_special', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit note to Credit Quotation?'));
+								}
+							}else{
+								echo $this->Html->link($custChngImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer'));
+								if (preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser)){
+									echo $this->Html->link($invChngImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit'));
+								}
+							}
 							
 							//echo $this->Html->link( $custChngImgHTML, array('action' => 'change_customer', $creditPaymentDetail['CreditReceipt']['id']), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer')); 
 							//echo $this->Html->link(__('Change Customer'), array('action' => 'change_customer', $creditPaymentDetail['CreditReceipt']['id']));
 							 //echo $this->Html->link(__('Change Invoice'), array('action' => 'org_to_special', $creditPaymentDetail['CreditReceipt']['id']));
-							 if (preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser)){
-							echo $this->Html->link($invChngImgHTML, array('action' => 'org_to_special', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit note to Credit Quotation?'));
-							 }
+							 
 							
 							// echo $this->Html->link(__('Chng 2 Cred Quot'), array('action' => 'org_to_special', $creditPaymentDetail['CreditReceipt']['id']),array('title' => 'Change to Credit Quotation','confirm' => 'Are you sure you want to change Credit Invoice to Credit Quotation?'));
 							?>
 						<?php }else{
-                            
+                             if(!empty( $creditReceiptData[$receipt_id]['id'] )){
 							   echo $this->Html->link($viewImgHTML, array('action' => 'view', $creditReceiptData[$receipt_id]['id'],$kiosk_id), array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
-						 //  echo $this->Html->link(__('View'), array('action' => 'view', $creditPaymentDetail['CreditReceipt']['id'],$kiosk_id));
-						 echo $this->Html->link($pmtImgHTML, array('action' => 'update_credit_payment', $creditPaymentDetail->id,$kiosk_id), array('escapeTitle' => false, 'title' => 'Update Payment', 'alt' => 'Update Payment'));
+							 }else{
+								echo $this->Html->link($viewImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+							 }
+							//  echo $this->Html->link(__('View'), array('action' => 'view', $creditPaymentDetail['CreditReceipt']['id'],$kiosk_id));
+							echo $this->Html->link($pmtImgHTML, array('action' => 'update_credit_payment', $creditPaymentDetail->id,$kiosk_id), array('escapeTitle' => false, 'title' => 'Update Payment', 'alt' => 'Update Payment'));
 						  // echo $this->Html->link(__('Update Payment'), array('action' => 'update_credit_payment', $creditPaymentDetail['CreditPaymentDetail']['id'],$kiosk_id));
 						   //echo $this->Html->link(__('Change Customer'), array('action' => 'change_customer', $creditPaymentDetail['CreditReceipt']['id'],$kiosk_id));
-						   if (preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser)){
-						   echo $this->Html->link($invChngImgHTML, array('action' => 'org_to_special', $creditReceiptData[$receipt_id]['id'],$kiosk_id), array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit note to Credit Quotation?'));
-						   }
-						   echo $this->Html->link($custChngImgHTML, array('action' => 'change_customer', $creditReceiptData[$receipt_id]['id'],$kiosk_id), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer','confirm' => 'Are you sure you want to change customer?'));
+							if(!empty( $creditReceiptData[$receipt_id]['id'] )){
+								if (preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser)){
+									echo $this->Html->link($invChngImgHTML, array('action' => 'org_to_special', $creditReceiptData[$receipt_id]['id'],$kiosk_id), array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit note to Credit Quotation?'));
+								}
+								echo $this->Html->link($custChngImgHTML, array('action' => 'change_customer', $creditReceiptData[$receipt_id]['id'],$kiosk_id), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer','confirm' => 'Are you sure you want to change customer?'));
+							}else{
+								if (preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser)){
+									echo $this->Html->link($invChngImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit'));
+								}
+								echo $this->Html->link($custChngImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer'));
+							}
 						    //echo $this->Html->link(__('Change Customer'), array('action' => 'change_customer', $creditPaymentDetail['CreditReceipt']['id'],$kiosk_id));
 						   //echo $this->Html->link(__('Chng 2 Cred Quot'), array('action' => 'org_to_special', $creditPaymentDetail['CreditReceipt']['id'],$kiosk_id),array('title' => 'Change to Credit Quotation','confirm' => 'Are you sure you want to change Credit Invoice to Credit Quotation?'));
 						}
 					}else{
-                          
-						echo $this->Html->link($viewImgHTML, array('action' => 'view', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+                          if(!empty( $creditReceiptData[$receipt_id]['id'] )){
+								echo $this->Html->link($viewImgHTML, array('action' => 'view', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+						  }else{
+							echo $this->Html->link($viewImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'View Credit', 'alt' => 'View Credit'));
+						  }
 						//echo $this->Html->link(__('View'), array('action' => 'view', $creditPaymentDetail['CreditReceipt']['id']));
 						echo $this->Html->link($pmtImgHTML, array('action' => 'update_credit_payment', $creditPaymentDetail->id), array('escapeTitle' => false, 'title' => 'Update Payment', 'alt' => 'Update Payment'));
 					//	echo $this->Html->link(__('Update Payment'), array('action' => 'update_credit_payment', $creditPaymentDetail['CreditPaymentDetail']['id']));
-					if (preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser)){
-					echo $this->Html->link($invChngImgHTML, array('action' => 'org_to_special', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit note to Credit Quotation?'));
-					}
-					echo $this->Html->link($custChngImgHTML, array('action' => 'change_customer', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer','confirm' => 'Are you sure you want to change customer?'));
+						if(!empty( $creditReceiptData[$receipt_id]['id'] )){
+							if (preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser)){
+								echo $this->Html->link($invChngImgHTML, array('action' => 'org_to_special', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit note to Credit Quotation?'));
+							}
+							echo $this->Html->link($custChngImgHTML, array('action' => 'change_customer', $creditReceiptData[$receipt_id]['id']), array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer','confirm' => 'Are you sure you want to change customer?'));
+						}else{
+							if (preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser)){
+								echo $this->Html->link($invChngImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'Change Credit', 'alt' => 'Change Credit','confirm' => 'Are you sure you want to change Credit note to Credit Quotation?'));
+							}
+							echo $this->Html->link($custChngImgHTML, '#-1', array('escapeTitle' => false, 'title' => 'Change customer', 'alt' => 'Change customer'));
+						}
 						//echo $this->Html->link(__('Chng 2 Cred Quot'), array('action' => 'org_to_special', $creditPaymentDetail['CreditReceipt']['id']),array('title' => 'Change to Credit Quotation','confirm' => 'Are you sure you want to change Credit Invoice to Credit Quotation?'));
 					}
 				

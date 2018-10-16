@@ -331,10 +331,12 @@ class CreditProductDetailsController  extends AppController
 		$customerIdArr = array();
 		if(!empty($creditReceiptData)){
 		  foreach($creditReceiptData as $key => $value){
-			   if(array_key_exists('customer_id',$value)){
+			   if(is_array($value) && array_key_exists('customer_id',$value)){
+               //For some reason, 0 index was coming without data; so it is added in above if clause is_array($value) 
 					$customerIdArr[] = $value['customer_id'];	
-			   }
-			   
+			   }else{
+               unset($creditReceiptData[$key]);
+            }
 		   }  
 		}
 		
