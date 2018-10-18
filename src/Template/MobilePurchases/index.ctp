@@ -24,31 +24,28 @@ use Cake\I18n\Time;
 	<h2><?php echo __('Mobile Stock'); ?></h2>
 	<h3 style="color: red;">Red Color ID Is For Wholesale Bulk Mobiles</h3>
 	<h3 style="color: blue;">Blue Color ID Is For Kiosk Bulk Mobiles</h3>
-	<?php echo $this->Form->create('TransferMobile', array('url' => array('controller' => 'mobile_purchases', 'action' => 'index')));?>
 	<table cellpadding="0" cellspacing="0">
 	<thead>
 	<tr>
-			<th>&nbsp;<?php echo $this->Paginator->sort('id'); ?></th>
-			<?php
-			if ($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS || $this->request->session()->read('Auth.User.group_id') == FRANCHISE_OWNER || $this->request->session()->read('Auth.User.group_id') == MANAGERS){
-			?>
-			<th><?php echo $this->Paginator->sort('kiosk_id'); ?></th>
-			<?php
-			}
-			?>
-			<th><?php echo $this->Paginator->sort('brand_id'); ?></th>
-			<th><?php echo $this->Paginator->sort('mobile_model_id'); ?></th>
-			<th><?php echo $this->Paginator->sort('color'); ?></th>
-			<th><?php echo $this->Paginator->sort('imei', 'IMEI'); ?></th>			
-			<th><?php echo $this->Paginator->sort('selling_price','Selling Price'); ?></th>
-			
-			<th><?php echo $this->Paginator->sort('grade'); ?></th>
-			<th><?php echo $this->Paginator->sort('type'); ?></th>
-			<th><?php echo $this->Paginator->sort('network_id'); ?></th>
-			 		
-			<th><?php echo $this->Paginator->sort('created','Purchased On'); ?></th>
-			<th><?php echo $this->Paginator->sort('new_kiosk_id','Destination'); ?></th>
-			<th class="actions"><?php echo __('Actions'); ?></th>
+		<th>&nbsp;<?php echo $this->Paginator->sort('id'); ?></th>
+		<?php
+		if ($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS || $this->request->session()->read('Auth.User.group_id') == FRANCHISE_OWNER || $this->request->		session()->read('Auth.User.group_id') == MANAGERS){
+		?>
+		<th><?php echo $this->Paginator->sort('kiosk_id'); ?></th>
+		<?php
+		}
+		?>
+		<th><?php echo $this->Paginator->sort('brand_id'); ?></th>
+		<th><?php echo $this->Paginator->sort('mobile_model_id'); ?></th>
+		<th><?php echo $this->Paginator->sort('color'); ?></th>
+		<th><?php echo $this->Paginator->sort('imei', 'IMEI'); ?></th>			
+		<th><?php echo $this->Paginator->sort('selling_price','Selling Price'); ?></th>
+		<th><?php echo $this->Paginator->sort('grade'); ?></th>
+		<th><?php echo $this->Paginator->sort('type'); ?></th>
+		<th><?php echo $this->Paginator->sort('network_id'); ?></th>
+		<th><?php echo $this->Paginator->sort('created','Purchased On'); ?></th>
+		<th><?php echo $this->Paginator->sort('new_kiosk_id','Destination'); ?></th>
+		<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -176,11 +173,12 @@ use Cake\I18n\Time;
 				}?></td>
 		<td class="actions">
 			<?php
-			if($currentStatus==2){
+			if($currentStatus == 2){
 				if($kiosk_id == $mobilePurchase->kiosk_id ){
+					echo $this->Form->create('TransferMobile', array('url' => array('controller' => 'mobile_purchases', 'action' => 'index')));
                     echo "<input type='hidden' name='TransferMobile[transfer_reserved][$purchaseId]' value = {$newKioskId}>";
-                   echo  $this->Form->button(__('Transfer'));  
-     
+					echo  $this->Form->button(__('Transfer'));  
+					echo  $this->Form->end();
                       ?>&nbsp;
 				<?php }else{
 					echo "<strong>Reserved</strong>";
@@ -228,15 +226,14 @@ use Cake\I18n\Time;
 		</td>
 		<td>
 			<form target="_blank" method="post" action="/mobile-purchases/print_label">
-						<input type="text" name="print_label_price" value="<?php echo $selling_price;?>" style="width: 29px;" />
-						<input type="submit" name="print" value="Print Label" />
-						<input type="hidden" name="id" value="<?php echo $mobilePurchase->id;?>" />
-						<input type="hidden" name="selling_price_for_label" value="<?php echo $selling_price;?>" />
-					</form>
+				<input type="text" name="print_label_price" value="<?php echo $selling_price;?>" style="width: 29px;" />
+				<input type="submit" name="print" value="Print Label" />
+				<input type="hidden" name="id" value="<?php echo $mobilePurchase->id;?>" />
+				<input type="hidden" name="selling_price_for_label" value="<?php echo $selling_price;?>" />
+			</form>
 		</td>
 	</tr>
 <?php endforeach;
-	echo  $this->Form->end() ;  
 ?>
  
 	</tbody>

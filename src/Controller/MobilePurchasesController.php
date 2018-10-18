@@ -48,133 +48,128 @@ class MobilePurchasesController extends AppController{
 		$this->loadComponent('Barcode');
        $this->loadComponent('ScreenHint');
    }
-    public function index(){
-        $gradeType = Configure::read('grade_type');
-		$purchasingOptions = Configure::read('purchase_statuses');
-		$identificationOptions = Configure::read('identification');
-		$discountOptions = Configure::read('discount');
-		$colorOptions = Configure::read('color');
-		$countryOptions = Configure::read('uk_non_uk');
-		$this->set(compact('purchasingOptions', 'identificationOptions', 'colorOptions','countryOptions','gradeType','discountOptions'));
-         if ($this->request->is('post')){
-            if(array_key_exists('transfer_reserved',$this->request->data['TransferMobile']) &&
-			!empty($this->request->data['TransferMobile']['transfer_reserved'])
-					){
-                
+   public function index(){
+      $gradeType = Configure::read('grade_type');
+      $purchasingOptions = Configure::read('purchase_statuses');
+      $identificationOptions = Configure::read('identification');
+      $discountOptions = Configure::read('discount');
+      $colorOptions = Configure::read('color');
+      $countryOptions = Configure::read('uk_non_uk');
+      $this->set(compact('purchasingOptions', 'identificationOptions', 'colorOptions','countryOptions','gradeType','discountOptions'));
+      
+      if ($this->request->is('post')){
+         if(
+            array_key_exists('transfer_reserved',$this->request->data['TransferMobile']) &&
+            !empty($this->request->data['TransferMobile']['transfer_reserved'])
+         ){
+            //pr($this->request->data['TransferMobile']);die;
 				$transferReservedData = $this->request->data['TransferMobile']['transfer_reserved'];
 				if(!empty($transferReservedData)){
-                   
 					$reservedCount = 0;
-                   
-					foreach($transferReservedData as $purchase_id=>$selected_kiosk){
-                        $tranBy = $this->request->session()->read('Auth.User.id'); 
-						 $tranDate = $this->current_date_time();
-                        if($this->MobilePurchases->updateAll(
-							['status' => 0,'receiving_status' => 1,'transient_date' => $tranDate,'transient_by' => $tranBy],
+					foreach($transferReservedData as $purchase_id => $selected_kiosk){
+                  $tranBy = $this->request->session()->read('Auth.User.id'); 
+                  $tranDate = $this->current_date_time();
+                  $dataArr = ['status' => 0, 'receiving_status' => 1, 'transient_date' => $tranDate,'transient_by' => $tranBy];
+                  if($selected_kiosk == 10000){
+                     $dataArr["new_kiosk_id"] = 10000;
+                  }
+                  if($this->MobilePurchases->updateAll(
+							$dataArr,
 							['MobilePurchase.id' => $purchase_id])
-                        ){
-                            
-							$mobilePurchaseData_query = $this->MobilePurchases->find('all',
+                  ){
+                     $mobilePurchaseData_query = $this->MobilePurchases->find('all',
                                                                                     ['conditions' =>
                                                                                      ['MobilePurchases.id' => $purchase_id]
                                                                                     ] );
-							 $mobilePurchaseData_reuslt = $mobilePurchaseData_query->first();
-                            if(!empty($mobilePurchaseData_reuslt)){
-                             $mobilePurchaseData  = $mobilePurchaseData_reuslt->toArray();
-                            }
-                           // pr($mobilePurchaseData);die;
-                            //$this->MobileTransferLog->clear();
+							$mobilePurchaseData_reuslt = $mobilePurchaseData_query->first();
+                     if(!empty($mobilePurchaseData_reuslt)){
+                        $mobilePurchaseData  = $mobilePurchaseData_reuslt->toArray();
+                     }
+                     // pr($mobilePurchaseData);die;
+                     //$this->MobileTransferLog->clear();
+                     
 							$mobileTransferLogData = array(
-									'mobile_purchase_reference' => $mobilePurchaseData['mobile_purchase_reference'],
-									'mobile_purchase_id' => $purchase_id,
-									'kiosk_id' => $mobilePurchaseData['kiosk_id'],
-									'network_id' => $mobilePurchaseData['network_id'],
-									'grade' => $mobilePurchaseData['grade'],
-									'type' => $mobilePurchaseData['type'],
-									'receiving_status' => 1,
-									'imei' => $mobilePurchaseData['imei'],
-									'user_id' => $this->request->session()->read('Auth.User.id'),
-									'status' => 0
-									);
+                                                      'mobile_purchase_reference' => $mobilePurchaseData['mobile_purchase_reference'],
+                                                      'mobile_purchase_id' => $purchase_id,
+                                                      'kiosk_id' => $mobilePurchaseData['kiosk_id'],
+                                                      'network_id' => $mobilePurchaseData['network_id'],
+                                                      'grade' => $mobilePurchaseData['grade'],
+                                                      'type' => $mobilePurchaseData['type'],
+                                                      'receiving_status' => 1,
+                                                      'imei' => $mobilePurchaseData['imei'],
+                                                      'user_id' => $this->request->session()->read('Auth.User.id'),
+                                                      'status' => 0
+                                                   );
 							
-							//$this->MobileTransferLog->create();
+                     //$this->MobileTransferLog->create();
                        
-                             $MobileTransferLog = $this->MobileTransferLogs->newEntity();
-                             $mobileTransferLogData = $this->MobileTransferLogs->patchEntity($MobileTransferLog, $mobileTransferLogData);
-                             if($this->MobileTransferLogs->save($mobileTransferLogData)) {
-                               $reservedCount++;
-                             }
+                     $MobileTransferLog = $this->MobileTransferLogs->newEntity();
+                     $mobileTransferLogData = $this->MobileTransferLogs->patchEntity($MobileTransferLog, $mobileTransferLogData);
+                     if($this->MobileTransferLogs->save($mobileTransferLogData)) {
+                       $reservedCount++;
+                     }
 						}
 					}
 					if($reservedCount==1){
-                         $this->Flash->success(__("Mobile with purchase id: $purchase_id has been transferred."));
-						 return $this->redirect(['action' => 'index']);
+                  $this->Flash->success(__("Mobile with purchase id: $purchase_id has been transferred."));
+                  return $this->redirect(['action' => 'index']);
 					}
 				}
 			}
 		}else{
-        $query = $this->Users->find('list', [
-                                                'keyField' => 'id',
-                                                'valueField' => 'username'
-                                        ]);
-        if(!empty($query)){
-           $users = $query->toArray();
-        }
-        $kiosks_query = $this->Kiosks->find('list',array('fields' =>  array('id', 'name'), 'order' => array('Kiosks.name asc')));
-        if(!empty($kiosks_query)){
-            $kiosks  = $kiosks_query->toArray();
-        }
-        $kiosk_id = $this->request->session()->read('kiosk_id'); 
-        if($kiosk_id > 0){
+         $query = $this->Users->find('list', [
+                                                 'keyField' => 'id',
+                                                 'valueField' => 'username'
+                                         ]);
+         if(!empty($query)){
+            $users = $query->toArray();
+         }
+         $kiosks_query = $this->Kiosks->find('list',array('fields' =>  array('id', 'name'), 'order' => array('Kiosks.name asc')));
+         if(!empty($kiosks_query)){
+             $kiosks  = $kiosks_query->toArray();
+         }
+         $kiosk_id = $this->request->session()->read('kiosk_id'); 
+         if($kiosk_id > 0){
             //mobile purchase status 0 => available, 1 => sold , 2 => reserved, 3 => sent for unlock 4 => under repair
-         $this->paginate = [
-                                'contain' => ['Kiosks','Brands', 'MobileModels'],
-                               'conditions' => ['MobilePurchases.kiosk_id' => $kiosk_id,
-                                                             'MobilePurchases.status NOT IN' => 1 
-                                                  ]
-                                 ,
-                               'limit' => ROWS_PER_PAGE  ,
-                                'order'=>['MobilePurchases.id desc'] 
-                           ];
-                                           
-           }else{
-             
-                 $this->paginate = [
-                                'contain' => ['Kiosks','Brands', 'MobileModels'],
-                                'conditions' => [
-                                                     'MobilePurchases.status NOT IN' => 1 
-                                                  ]
-                                 ,
-                               'limit' => ROWS_PER_PAGE,
-                                'order'=>['MobilePurchases.id desc'] 
-                           ];
-                  
-				 
+            $this->paginate = [
+                                 'contain' => ['Kiosks','Brands', 'MobileModels'],
+                                 'conditions' => ['MobilePurchases.kiosk_id' => $kiosk_id,
+                                                   'MobilePurchases.status NOT IN' => 1 
+                                                  ],
+                                 'limit' => ROWS_PER_PAGE  ,
+                                 'order'=>['MobilePurchases.id desc'] 
+                           ];            
+         }else{
+            $this->paginate = [
+                                 'contain' => ['Kiosks','Brands', 'MobileModels'],
+                                 'conditions' => [
+                                                      'MobilePurchases.status NOT IN' => 1 
+                                                   ],
+                                 'limit' => ROWS_PER_PAGE,
+                                 'order'=>['MobilePurchases.id desc'] 
+                              ];
 			}
             
-            $mobilePurchases_query = $this->paginate($this->MobilePurchases);
-           
-            if(!empty($mobilePurchases_query)){
-                $mobilePurchases = $mobilePurchases_query->toArray();
-                
-            }
-          //pr($mobilePurchases);die;
-            $modelIdsArr = array();
-			foreach($mobilePurchases as $key=>$mobilePurchase){
-                
+         $mobilePurchases_query = $this->paginate($this->MobilePurchases);
+         if(!empty($mobilePurchases_query)){
+             $mobilePurchases = $mobilePurchases_query->toArray();
+         }
+         //pr($mobilePurchases);die;
+         $modelIdsArr = array();
+			foreach($mobilePurchases as $key => $mobilePurchase){
 				$modelIdsArr[$mobilePurchase['mobile_model_id']]= $mobilePurchase['mobile_model_id'];
-				  $data_query = $this->MobilePrices->find("all",array('fields' => array('brand_id', 'mobile_model_id','locked','sale_price'),
+				$data_query = $this->MobilePrices->find("all",array('fields' => array('brand_id', 'mobile_model_id','locked','sale_price'),
 													'conditions'=>array(
-																'MobilePrices.brand_id' => $mobilePurchase['brand_id'],
-                                                                'MobilePrices.mobile_model_id'=>$mobilePurchase['mobile_model_id'],														            'MobilePrices.locked'=>$mobilePurchase['type'],
-                                                                    'MobilePrices.grade'=>$mobilePurchase['grade'] 
+                                                            'MobilePrices.brand_id' => $mobilePurchase['brand_id'],
+                                                            'MobilePrices.mobile_model_id'=>$mobilePurchase['mobile_model_id'],														            'MobilePrices.locked'=>$mobilePurchase['type'],
+                                                            'MobilePrices.grade'=>$mobilePurchase['grade'] 
 																		)
 													)
 									 );
-                 $data_query = $data_query->first();
-                    if(!empty($data_query)){
-                       $data  = $data_query->toArray();
-                   }
+               $data_query = $data_query->first();
+               if(!empty($data_query)){
+                  $data  = $data_query->toArray();
+               }
                    
 				if(!empty($data)){
 					$salePrice[$mobilePurchase['id']] = $data['sale_price'];
@@ -183,44 +178,41 @@ class MobilePurchasesController extends AppController{
 			if(empty($modelIdsArr)){
 			   $modelIdsArr = array(0 => null);
 			}
-            $model_query = $this->MobileModels->find('list', [
-                                                        'keyField' => 'id',
-                                                        'valueField' => 'model',
-											 'order'=>'model asc',
-                                                         'conditions' =>['MobileModels.status' => 1,
-																		 'MobileModels.id IN'=>$modelIdsArr
-																		 ],
-                                                          
-                                                    ] 
-                                            );
-            if(!empty($model_query)){
-                 $mobileModels = $model_query->toArray();
-            }
-			 $network_query = $this->Networks->find('list', [
-                                                        'keyField' => 'id',
-                                                        'valueField' => 'name',
+         $model_query = $this->MobileModels->find('list', [
+                                                     'keyField' => 'id',
+                                                     'valueField' => 'model',
+                               'order'=>'model asc',
+                                                      'conditions' =>['MobileModels.status' => 1,
+                                                    'MobileModels.id IN'=>$modelIdsArr
+                                                    ],
+                                                       
+                                                 ] 
+                                         );
+         if(!empty($model_query)){
+              $mobileModels = $model_query->toArray();
+         }
+         $network_query = $this->Networks->find('list', [
+                                                       'keyField' => 'id',
+                                                       'valueField' => 'name',
+                                                        
                                                          
-                                                          
-                                                    ] 
-                                            );
-            if(!empty($network_query)){
-                 $networks = $network_query->toArray();
-            } 
-            
-		 
+                                                   ] 
+                                           );
+         if(!empty($network_query)){
+              $networks = $network_query->toArray();
+         }
 			$networks[0] = '--';
 			$networks[""] = '--';
 			$lockedUnlocked = array('1'=>'Locked','0'=>'Unlocked');
-            // $mobilePurchases_query = $this->paginate($this->MobilePurchases);
-            
-            // pr($mobilePurchases);die;
-            $this->set(compact('mobileModels','mobilePurchases','networks','lockedUnlocked','kiosks','users','salePrice','gradeType '));
-        
-            $this->set(compact('mobilePurchases'));
-             $this->set('_serialize', ['mobilePurchases']);
-        }
-    }
-    public function current_date_time(){
+         // $mobilePurchases_query = $this->paginate($this->MobilePurchases);
+         // pr($mobilePurchases);die;
+         $this->set(compact('mobileModels','mobilePurchases','networks','lockedUnlocked','kiosks','users','salePrice','gradeType '));
+         $this->set(compact('mobilePurchases'));
+         $this->set('_serialize', ['mobilePurchases']);
+      }
+   }
+    
+   public function current_date_time(){
         $conn = ConnectionManager::get('default');
           $stmt = $conn->execute('SELECT NOW() as created');
           $currentTimeInfo = $stmt ->fetchAll('assoc');
@@ -1687,7 +1679,7 @@ class MobilePurchasesController extends AppController{
 	}
     public function transient_mobiles(){
 		if($this->request->Session()->read('Auth.User.group_id')==ADMINISTRATORS || $this->request->Session()->read('Auth.User.group_id') == MANAGERS){
-			$kiosk_id = 0;
+			$kiosk_id = 10000;
 		}else{
 			$kiosk_id = $this->request->Session()->read('kiosk_id');
 		}
@@ -1712,7 +1704,7 @@ class MobilePurchasesController extends AppController{
 		  $transientMobiles = array();
 		}
 		$kioskIdArr = $brandIdArr = $mobileIdArr = array();
-		foreach($transientMobiles as $key=>$transientMobile){
+		foreach($transientMobiles as $key => $transientMobile){
 			$kioskIdArr[$transientMobile['kiosk_id']] = $transientMobile['kiosk_id'];
 			$brandIdArr[$transientMobile['brand_id']] = $transientMobile['brand_id'];
 			$mobileIdArr[$transientMobile['mobile_model_id']] = $transientMobile['mobile_model_id'];
@@ -2779,8 +2771,12 @@ class MobilePurchasesController extends AppController{
 	}
     
     public function transientMobiles(){
-		if($this->request->session()->read('Auth.User.group_id')==ADMINISTRATORS || $this->request->session()->read('Auth.User.group_id') == MANAGERS){
-			$kiosk_id = 0;
+		if(
+         $this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS ||
+         $this->request->session()->read('Auth.User.group_id') == MANAGERS ||
+         $this->request->session()->read('Auth.User.group_id') == inventory_manager
+      ){
+			$kiosk_id = 10000;
 		}else{
 			$kiosk_id = $this->request->Session()->read('kiosk_id');
 		}
@@ -2790,72 +2786,90 @@ class MobilePurchasesController extends AppController{
                                                 'valueField' => 'username'
                                            ]
                                     );
-        $users_query = $users_query->hydrate(false);
-        if(!empty($users_query)){
-            $users = $users_query->toArray();
-        }else{
-            $users = array();
-        }
+      $users_query = $users_query->hydrate(false);
+      if(!empty($users_query)){
+         $users = $users_query->toArray();
+      }else{
+         $users = array();
+      }
 		$this->set('users', $users);
-		$transientMobiles_query = $this->MobilePurchases->find('all',array('conditions'=>array('MobilePurchases.new_kiosk_id'=>$kiosk_id,'MobilePurchases.receiving_status'=>1),'order' => 'id asc'));
-        //pr($transientMobiles_query);die;
-        $transientMobiles_query = $transientMobiles_query->hydrate(false);
-        if(!empty($transientMobiles_query)){
-            $transientMobiles = $transientMobiles_query->toArray();
-        }else{
-            $transientMobiles = array();
-        }
+      
+      if($kiosk_id == 0 or $kiosk_id == 10000){
+         $transientMobiles_query = $this->MobilePurchases->find('all',array('conditions' => array(
+                                                                                                 //'IN' => array('MobilePurchases.new_kiosk_id' => [0,10000]),
+                                                                                                 //'MobilePurchases.new_kiosk_id'=>$kiosk_id,
+                                                                                                  'MobilePurchases.new_kiosk_id IN'=> [0, 10000],
+                                                                                                 'MobilePurchases.receiving_status'=>1
+                                                                                                 ),
+                                                                            'order' => 'id asc'
+                                                                            ));
+      }else{
+         $transientMobiles_query = $this->MobilePurchases->find('all',array('conditions'=>array(
+                                                                                                'MobilePurchases.new_kiosk_id'=>$kiosk_id,
+                                                                                                'MobilePurchases.receiving_status'=>1),
+                                                                            'order' => 'id asc')
+                                                               );  
+      }
+      //pr($transientMobiles_query);die;
+      $transientMobiles_query = $transientMobiles_query->hydrate(false);
+      if(!empty($transientMobiles_query)){
+         $transientMobiles = $transientMobiles_query->toArray();
+      }else{
+         $transientMobiles = array();
+      }
+      
 		$kioskIdArr = $brandIdArr = $mobileIdArr = array();
 		foreach($transientMobiles as $key=>$transientMobile){
 			$kioskIdArr[$transientMobile['kiosk_id']] = $transientMobile['kiosk_id'];
 			$brandIdArr[$transientMobile['brand_id']] = $transientMobile['brand_id'];
 			$mobileIdArr[$transientMobile['mobile_model_id']] = $transientMobile['mobile_model_id'];
 		}
-		if(empty($kioskIdArr)){
-            $kioskIdArr = array(0 => null);
-        }
-        $kioskName_query = $this->Kiosks->find('list',[
-                                                        'conditions'=>['Kiosks.id IN'=>$kioskIdArr]
-                                                        ]
-                                                );
-        $kioskName_query = $kioskName_query->hydrate(false);
-        if(!empty($kioskName_query)){
-            $kioskName = $kioskName_query->toArray();
-        }else{
-            $kioskName = array();
-        }
-        if(empty($brandIdArr)){
-            $brandIdArr = array(0 => null);
-        }
-		$brandName_query = $this->Brands->find('list',[
-                                                    'conditions'=>['Brands.id IN'=>$brandIdArr],
-                                                    'keyField' => 'id',
-                                                    'valueField' => 'brand',
-										  'order'=>'brand asc'
-                                                ]
-                                        );
-        $brandName_query = $brandName_query->hydrate(false);
-        if(!empty($brandName_query)){
-            $brandName = $brandName_query->toArray();
-        }else{
-            $brandName = array();
-        }
-        if(empty($mobileIdArr)){
-            $mobileIdArr = array(0 => null);
-        }
-		$modelName_query = $this->MobileModels->find('list',[
-                                                        'conditions'=>['MobileModels.id IN'=>$mobileIdArr],
-                                                        'keyField' => 'id',
-                                                        'valueField' => 'model',
-											 'order'=>'model asc'
+      
+		if(empty($kioskIdArr)){$kioskIdArr = array(0 => null);}
+      $kioskName_query = $this->Kiosks->find('list',[
+                                                      'conditions'=>['Kiosks.id IN'=>$kioskIdArr]
                                                       ]
-                                               );
-        $modelName_query = $modelName_query->hydrate(false);
-        if(!empty($modelName_query)){
-            $modelName = $modelName_query->toArray();
-        }else{
-            $modelName = array();
-        }
+                                              );
+      $kioskName_query = $kioskName_query->hydrate(false);
+      if(!empty($kioskName_query)){
+          $kioskName = $kioskName_query->toArray();
+      }else{
+          $kioskName = array();
+      }
+      if(empty($brandIdArr)){
+          $brandIdArr = array(0 => null);
+      }
+      
+      $brandName_query = $this->Brands->find('list',[
+                                                 'conditions'=>['Brands.id IN'=>$brandIdArr],
+                                                 'keyField' => 'id',
+                                                 'valueField' => 'brand',
+                                                   'order'=>'brand asc'
+                                                ]
+                                          );
+      $brandName_query = $brandName_query->hydrate(false);
+      if(!empty($brandName_query)){
+          $brandName = $brandName_query->toArray();
+      }else{
+          $brandName = array();
+      }
+      if(empty($mobileIdArr)){
+          $mobileIdArr = array(0 => null);
+      }
+      $modelName_query = $this->MobileModels->find('list',[
+                                                     'conditions'=>['MobileModels.id IN'=>$mobileIdArr],
+                                                     'keyField' => 'id',
+                                                     'valueField' => 'model',
+                               'order'=>'model asc'
+                                                   ]
+                                            );
+      $modelName_query = $modelName_query->hydrate(false);
+      if(!empty($modelName_query)){
+         $modelName = $modelName_query->toArray();
+      }else{
+         $modelName = array();
+      }
+        
 		if($this->request->is('post')){
 			//pr($this->request->data['transientMobiles']['receive']);die;
 			$primaryIdArr = array();
@@ -2870,6 +2884,7 @@ class MobilePurchasesController extends AppController{
 			//}
 			//echo $kiosk_id;die;
 			if(count($primaryIdArr)){
+            if($kiosk_id == 0) $kiosk_id = 10000;
 				if($this->MobilePurchases->updateAll(
 					array('status' => "'0'",'kiosk_id' => "$kiosk_id",'receiving_status' => "'0'",'new_kiosk_id' => NULL),
 					array('MobilePurchases.id IN' => $primaryIdArr)
@@ -3286,24 +3301,27 @@ class MobilePurchasesController extends AppController{
 		}
 		//mobile purchase status 0 => available, 1 => sold , 2 => reserved, 3 => sent for unlock 4 => under repair
 		$checkIfDuplicate_query = $this->MobilePurchases->find('all',array('conditions'=>array('MobilePurchases.id'=>$purchaseId)));
-        $checkIfDuplicate_query = $checkIfDuplicate_query->hydrate(false);
-        if(!empty($checkIfDuplicate_query)){
-            $checkIfDuplicate = $checkIfDuplicate_query->first();
-        }else{
-            $checkIfDuplicate = array();
-        }
-		if($kioskId==$checkIfDuplicate['kiosk_id']){
+      $checkIfDuplicate_query = $checkIfDuplicate_query->hydrate(false);
+      if(!empty($checkIfDuplicate_query)){
+          $checkIfDuplicate = $checkIfDuplicate_query->first();
+      }else{
+          $checkIfDuplicate = array();
+      }
+      
+		if($kioskId == $checkIfDuplicate['kiosk_id']){
 			$this->Flash->error("Chosen kiosk should be different from the current kiosk");
-			return $this->redirect(array('action'=>'global_search'));
+			return $this->redirect(array('action' => 'global_search'));
 			die;
 		}
+      
 		$new_entity = $this->MobilePurchases->get($purchaseId);
-        $data_array = array();
-        $data_array['status'] = '2';
-        $data_array['new_kiosk_id'] = $kioskId;
-        $data_array['reserve_date'] = $this->current_date_time();
-        $data_array['reserved_by'] = $this->request->Session()->read('Auth.User.id');
-        $patch_entity = $this->MobilePurchases->patchEntity($new_entity,$data_array);
+      $data_array = array();
+      $data_array['status'] = '2';
+      $data_array['new_kiosk_id'] = $kioskId;
+      $data_array['reserve_date'] = $this->current_date_time();
+      $data_array['reserved_by'] = $this->request->Session()->read('Auth.User.id');
+      $patch_entity = $this->MobilePurchases->patchEntity($new_entity,$data_array);
+      
 		if($this->MobilePurchases->save($patch_entity)){
 				$mobileTransferLogData = array(
 						'mobile_purchase_reference' => $checkIfDuplicate['mobile_purchase_reference'],

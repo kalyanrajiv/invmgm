@@ -1,7 +1,7 @@
 <?php
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
-$jQueryURL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
+$jQueryURL = "https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
 if(defined('URL_SCHEME')){
 	$jQueryURL = URL_SCHEME."ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
 }
