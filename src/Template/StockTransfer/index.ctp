@@ -1,33 +1,24 @@
+<?php
+ use Cake\Core\Configure;
+ use Cake\Core\Configure\Engine\PhpConfig;
+ $siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+?>
 <style>
- #remote .tt-dropdown-menu {
-  max-height: 250px;
-  overflow-y: auto;
-}
- #remote .twitter-typehead {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.tt-dataset, .tt-dataset-product {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.row_hover:hover{
- color:blue;
- background-color:yellow;
-}
+ #remote .tt-dropdown-menu {max-height: 250px;overflow-y: auto;}
+ #remote .twitter-typehead {max-height: 250px;overflow-y: auto;}
+.tt-dataset, .tt-dataset-product {max-height: 250px;overflow-y: auto;}
+.row_hover:hover{color:blue;background-color:yellow;}
 </style>
 <?php
-$check_price = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'check_price'],true);
+ $check_price = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'check_price'],true);
 	extract($this->request->query);
 	if(!isset($search_kw)){$search_kw = "";}
 	if(empty($this->request->query)){
 		$displayType = "more_than_zero";
-		
 	}
 	$searchQueryUrl = "";
 	$searchKw = $categoryQuery = $categoryqryStr = '';
 	if(!empty($this->request->query)){
-	
 		if(array_key_exists('search_kw',$this->request->query)){
 			$searchKw = $this->request->query['search_kw'];
 		}
@@ -38,20 +29,15 @@ $check_price = $this->Url->build(['controller' => 'stock-transfer', 'action' => 
 				$categoryqryStr.="&category%5B%5D=$categoryqry";
 			}
 		}
-		
 		$searchQueryUrl = "/search?search_kw=$searchKw$categoryqryStr&display_type=$displayType&submit=Search+Product";
 	} 
 ?>
 <input type='hidden' name='check_price' id='check_price' value='<?=$check_price?>' />
 <div class="centralStocks index">
-
-   <div id="idVal">
-  
-</div>
-</script>
-	<form action='<?php echo $this->request->webroot;?>stock-transfer/search' method = 'get'>
-		<div class="search_div">
-			<fieldset>
+   <div id="idVal"></div>
+  <form action='<?php echo $this->request->webroot;?>stock-transfer/search' method = 'get'>
+   <div class="search_div">
+    <fieldset>
 				<legend>Search</legend>
 				<table>
 					<tr>
@@ -75,16 +61,12 @@ $check_price = $this->Url->build(['controller' => 'stock-transfer', 'action' => 
 		</div>
 	</form>
 	<?php
-	       $sessionKioskId = $this->request->Session()->read('kiosk_id');
+	 $sessionKioskId = $this->request->Session()->read('kiosk_id');
 		$sessionBaket = $this->request->Session()->read("Basket");
 		$kiosk_id = "";
 		$s_kiosk_id = $this->request->Session()->read("kioskId");
-		if( !empty($s_kiosk_id) ){
-			$kiosk_id = $this->request->Session()->read("kioskId");
-		}
-	?>
-	<?php
-		 $screenHint = $hintId = "";
+		if( !empty($s_kiosk_id) ){	$kiosk_id = $this->request->Session()->read("kioskId");}
+		$screenHint = $hintId = "";
 		if(!empty($hint)){
 		   $screenHint = $hint["hint"];
 		   $hintId = $hint["id"];
@@ -94,7 +76,6 @@ $check_price = $this->Url->build(['controller' => 'stock-transfer', 'action' => 
 	<table>
 		<tr>
 			<td>
-				
 				<h2><?php echo __('Stock Transfer')."<span style='background: skyblue;color: blue;' title=\"$screenHint\">?</span>"; ?>
 				<?php echo $this->Html->link($this->Html->image($updateUrl,array('fullBase' => true)), array('controller' => 'screen_hints', 'action' => 'edit',$hintId), array('escapeTitle' => false, 'title' => 'Edit Hint', 'alt' => 'Update payment','target' => '_blank'));?>
 				</h2>
@@ -199,10 +180,10 @@ $check_price = $this->Url->build(['controller' => 'stock-transfer', 'action' => 
 		$imageName =  $centralStock->image;
 		$absoluteImagePath = $imageDir.$imageName;
 		$imageURL = "/thumb_no-image.png";
-		$LargeimageURL = "/vga_thumb_no-image.png";
+		$largeimageURL = "/vga_thumb_no-image.png";
 		if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-			$imageURL = "/files/Products/image/".$centralStock->id."/$imageName";
-			$LargeimageURL = "/files/Products/image/".$centralStock->id."/vga_"."$imageName";
+			$imageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/thumb_".$imageName;
+			$largeimageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/vga_"."$imageName";
 		}
 		$productQuantity = "";
 		$productPrice = $centralStock->selling_price;
@@ -233,7 +214,7 @@ $check_price = $this->Url->build(['controller' => 'stock-transfer', 'action' => 
 		<td><?php
 			echo $this->Html->link(
 					$this->Html->image($imageURL, array('fullBase' => true,'width' => '100px','height' => '100px')),
-					$LargeimageURL,
+					$largeimageURL,
 					array('escapeTitle' => false, 'title' => $centralStock->product,'class' => "group{$key}")
 				);
 			?>

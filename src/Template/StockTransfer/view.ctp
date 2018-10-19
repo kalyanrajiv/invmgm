@@ -258,18 +258,20 @@ echo $this->Html->script('jquery.blockUI');
             <td>
                 <?php                    
                     $imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$product['product']['id'].DS;
-                    $imageName =  $product['product']['image'];
+                    //$imageName =  $product['product']['image'];
+																				$imageName = 'thumb_'.$product['product']['image'];
+																				$largeImageName = 'vga_'.$product['product']['image'];
                     $absoluteImagePath = $imageDir.$imageName;
-                   $LargeimageURL =  $imageURL = "/thumb_no-image.png";
+																				$LargeimageURL =  $imageURL = "/thumb_no-image.png";
                     if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
                         $imageURL = "{$siteBaseURL}/files/Products/image/".$product['product']['id']."/$imageName"; //rasu
-						$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$product['product']['id']."/vga_"."$imageName"; //rasu
+																								$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$product['product']['id']."/"."$largeImageName"; //rasu
                     }
                             
                     echo $this->Html->link(
                                 $this->Html->image($imageURL, array('fullBase' =>true,'width' => '100px','height' => '100px')), //rasu
                                 $LargeimageURL,
-                                array('escapeTitle' => false, 'title' => $product['product']['product'],'class' => "submodal")
+                                array('escapeTitle' => false, 'title' => $product['product']['product'],'class' => "group{$key}")
                                );
                 ?>
             </td>
@@ -396,22 +398,28 @@ echo $this->Html->script('jquery.blockUI');
 </script>
 <script>
 	function show_kiosk(kiosks) {
-		$('#kiosk_name').html("<span style='color:red'>No Kiosk Choosen</span>");
-		var box_val = $('#box_element').val();
-		var show  = [];
-		for (var i = 0; i < box_val.length;i++) {
-            show.push(toTitleCase(kiosks[box_val[i]]));
-        }
-		var final = show.join(", ");
-		if ($.trim(final) != "") {
-            $('#kiosk_name').html("<b>Kiosk choosen are:</b><br/>"+final);
-        }else{
-			 $('#kiosk_name').html("<span style='color:red'>No Kiosk Choosen</span>");
-		}
-    }
+					$('#kiosk_name').html("<span style='color:red'>No Kiosk Choosen</span>");
+					var box_val = $('#box_element').val();
+					var show  = [];
+					for (var i = 0; i < box_val.length;i++) {
+							show.push(toTitleCase(kiosks[box_val[i]]));
+					}
+					var final = show.join(", ");
+					if ($.trim(final) != "") {
+								$('#kiosk_name').html("<b>Kiosk choosen are:</b><br/>"+final);
+					}else{
+							$('#kiosk_name').html("<span style='color:red'>No Kiosk Choosen</span>");
+					}
+  }
 	function toTitleCase(str) {
 		return str.replace(/(?:^|\s)\w/g, function(match) {
 			return match.toUpperCase();
 		});
 	}
+</script>
+<?php echo '<script type="text/javascript" src="https://'.ADMIN_DOMAIN.'/js/jquery.colorbox.js"></script>';?>
+<script>
+	$(document).ready(function(){
+	<?php echo $groupStr;?>
+	});
 </script>

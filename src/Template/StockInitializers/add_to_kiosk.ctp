@@ -1,24 +1,16 @@
-<?php #pr($centralStocks);
+<?php
+	use Cake\Core\Configure;
+ use Cake\Core\Configure\Engine\PhpConfig;
+ $siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+	#pr($centralStocks);
 	extract($this->request->query);
 	if(!isset($search_kw)){$search_kw = "";}
 ?>
 <style>
- #remote .tt-dropdown-menu {
-  max-height: 250px;
-  overflow-y: auto;
-}
- #remote .twitter-typehead {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.tt-dataset, .tt-dataset-product {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.row_hover:hover{
- color:blue;
- background-color:yellow;
-}
+ #remote .tt-dropdown-menu {max-height: 250px;overflow-y: auto;}
+ #remote .twitter-typehead {max-height: 250px;overflow-y: auto;}
+.tt-dataset, .tt-dataset-product {max-height: 250px;overflow-y: auto;}
+.row_hover:hover{color:blue;background-color:yellow;}
 </style>
 
 <div class="centralStocks index">
@@ -170,8 +162,8 @@
 		$absoluteImagePath = $imageDir.$imageName;
 		$LargeimageURL = $imageURL = "/thumb_no-image.png";
 		if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-			$imageURL = "/files/Products/image/".$centralStock->id."/$imageName";
-			$LargeimageURL = "/files/Products/image/".$centralStock->id."/vga_"."$imageName";
+			$imageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/thumb_".$imageName;
+			$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/vga_"."$imageName";
 		}
 		$sellingPrice = $centralStock->selling_price;
 		$productQuantity = '';

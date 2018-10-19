@@ -1,22 +1,21 @@
 <?php
-$jQueryURL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
-if(defined('URL_SCHEME')){
-	$jQueryURL = URL_SCHEME."ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
-}
+		use Cake\Core\Configure;
+		use Cake\Core\Configure\Engine\PhpConfig;
+		$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+		$jQueryURL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
+		if(defined('URL_SCHEME')){
+			$jQueryURL = URL_SCHEME."ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
+		}
 ?>
 <script type="text/javascript" src="<?php echo $jQueryURL;?>"></script>
 <?php
-use Cake\Utility\Text;
-?>
-<?php
+	use Cake\Utility\Text; 
 	echo $this->Html->script('jquery.printElement');
 	echo $this->Html->script('jquery.blockUI');
-	
 	echo $this->Html->css('model/style.css');
-echo $this->Html->css('model/submodal.css');
+	echo $this->Html->css('model/submodal.css');
  echo $this->Html->script('model/submodalsource.js');
  echo $this->Html->script('model/submodal.js');
- 
  $check_price = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'check_price'],true);
 	
 	$kioskPlacedOrderId = $this->request->params['pass']['0'];
@@ -305,8 +304,8 @@ echo $this->Html->css('model/submodal.css');
 		$absoluteImagePath = $imageDir.$imageName;
 		$LargeimageURL = $imageURL = "/thumb_no-image.png";
 		if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-			$imageURL = "/files/Products/image/".$product['id']."/$imageName";
-			$LargeimageURL = "/files/Products/image/".$product['id']."/vga_"."$imageName";
+			$imageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/thumb_".$imageName;
+			$largeImageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/vga_".$imageName;
 		}
 		$productQuantity = "";
 		$productPrice = $product['selling_price'];
@@ -369,11 +368,10 @@ echo $this->Html->css('model/submodal.css');
 		</td>
 		<?php if($forprint == "yes"){?>
 		<td><?php
-		
 			echo $this->Html->link(
 							$this->Html->image($imageURL, array('fullBase' => true,'width' => '95px','height' => '90px')),
-							$imageURL,
-							array('escapeTitle' => false, 'title' => $product['product'],'class' => "submodal")
+							$largeImageURL,
+							array('escapeTitle' => false, 'title' => $product['product'],'class' => "group{$key}")
 					);
 		
 			?>
@@ -610,7 +608,8 @@ echo $this->Html->css('model/submodal.css');
 				$absoluteImagePath = $imageDir.$imageName;
 				$imageURL = "/thumb_no-image.png";
 				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-					$imageURL = "/files/Products/image/".$cancelProduct['id']."/$imageName";
+					$imageURL = "$siteBaseURL/files/Products/image/".$cancelProduct['id']."/thumb_".$imageName;
+					$largeImageURL = "$siteBaseURL/files/Products/image/".$cancelProduct['id']."/$largeImageName"; //rasu
 				}
 				?>
 				<tr style="color: red;">
@@ -629,8 +628,8 @@ echo $this->Html->css('model/submodal.css');
 						if($forprint == "yes"){
 							echo "<td>";
 							echo $this->Html->link(
-											$this->Html->image($imageURL,array('fullBase' => true,'width' => '95px','height' => '90px')),
-											$imageURL,
+											$this->Html->image($imageURL, array('fullBase' => true,'width' => '95px','height' => '90px')),
+											$largeImageURL,
 											array('escapeTitle' => false, 'title' => $cancelProduct['product'],'class' => "submodal")
 									);
 							echo "</td>";
@@ -796,9 +795,6 @@ echo $this->Html->css('model/submodal.css');
 	$update_type2 = $this->Url->build(['controller' => 'StockTransfer', 'action' => 'placedOrder',$kioskPlacedOrderId],true);
 	echo "<input type='hidden' id='redirect_url' value='$update_type2'/>";
 ?>
-
-
-
 <script>
 	function printDiv() {
 		var printContents = document.getElementById("printit").innerHTML;
@@ -811,10 +807,10 @@ echo $this->Html->css('model/submodal.css');
 		window.print();
 		document.body.innerHTML = originalContents;
 		location.reload();
-		
-	   }
+	}
 </script>
- <script>
+
+<script>
 	$("input[id*='quantity_check']").keydown(function (event) {
 		if (event.shiftKey == true) {event.preventDefault();}
 		if ((event.keyCode >= 48 && event.keyCode <= 57) ||
@@ -830,7 +826,7 @@ echo $this->Html->css('model/submodal.css');
 			event.preventDefault();
 		}
 		
-        });
+ });
 </script>
 <script type="text/javascript">
 	function updateHidden(productID){
@@ -839,78 +835,78 @@ echo $this->Html->css('model/submodal.css');
 	}
 	
 	function validateForm(cancel = 0) {
-		var cancelled = $('#CancelButton').val();
-		var replaced = $('#ReplaceButton').val();
-		if (replaced == 1) {
-            
-        }else if (cancelled == 1) {
-            var favorite = [];
-			$.each($("input[name='cancelled_items[]']:checked"), function(){
-				var productCode = $(this).attr( "data" );
-				favorite.push(productCode);//$(this).val();
-			});
-			if (favorite.length == 0) {
-                alert("You have not selected any item for cancellation! If you want to replace product or want to add new product, please uncheck all checkboxes!");
-				return false;
-            }else{
-				var r = confirm("Are you sure you want to cancel product(s) with product code(s):"+favorite.join(", "));
-				
-				if (r == true) {
-					$('#CancelButton').val('1');
-					return true;
-				} else {
-					$('#CancelButton').val('0');
-					return false;
-				}
-			}
-        }
+				var cancelled = $('#CancelButton').val();
+				var replaced = $('#ReplaceButton').val();
+				if (replaced == 1) {
+														
+				}else if (cancelled == 1) {
+					var favorite = [];
+					$.each($("input[name='cancelled_items[]']:checked"), function(){
+						var productCode = $(this).attr( "data" );
+						favorite.push(productCode);//$(this).val();
+					});
+					
+					if (favorite.length == 0) {
+							alert("You have not selected any item for cancellation! If you want to replace product or want to add new product, please uncheck all checkboxes!");
+							return false;
+					}else{
+							var r = confirm("Are you sure you want to cancel product(s) with product code(s):"+favorite.join(", "));
+							if (r == true) {
+								$('#CancelButton').val('1');
+								return true;
+							} else {
+								$('#CancelButton').val('0');
+								return false;
+							}
+					}
     }
+ }
 	
-    $(document).ready(function() {
-	
-		//var delete
-		$('#Dispatch').click(function() {
-			$('#CancelButton').val('0');
-			$.blockUI({ message: 'Just a moment...' });
-		});
-		$('#cancel_item_1').click(function() {
-			$('#CancelButton').val('1');
-		});
-
-        $("#cancel_item").click(function(){
-            var favorite = [];
-            $.each($("input[name='cancelled_items[]']:checked"), function(){            
-                favorite.push($(this).val());
-            });
-			var r = confirm("Are you sure you want to cancel product(s) with product code(s):"+favorite.join(", "));
-			
-            if (r == true) {
-				$('#CancelButton').val('1');
-				$('#ProductPlacedOrderForm').trigger('submit');
-				//$('#ProductPlacedOrderForm').submit();
-			} else {
-				$('#CancelButton').val('0');
-				txt = "You pressed Cancel!";
-			}
-        });
+ $(document).ready(function() {
+				//var delete
+				$('#Dispatch').click(function() {
+					$('#CancelButton').val('0');
+					$.blockUI({ message: 'Just a moment...' });
+				});
+				$('#cancel_item_1').click(function() {
+					$('#CancelButton').val('1');
+				});
 		
-		/*$("#cancel_item").confirm({
-			text: "Are you sure you want to delete checked rows?",
-			title: "Confirmation required",
-			confirm: function(button) {
-				
-			},
-			cancel: function(button) {
-				// nothing to do
-			},
-			confirmButton: "Yes I am",
-			cancelButton: "No",
-			post: true,
-			confirmButtonClass: "btn-danger",
-			cancelButtonClass: "btn-default",
-			dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
-		});*/
-    });
+				$("#cancel_item").click(function(){
+					var favorite = [];
+					$.each($("input[name='cancelled_items[]']:checked"), function(){            
+									favorite.push($(this).val());
+					});
+					var r = confirm("Are you sure you want to cancel product(s) with product code(s):"+favorite.join(", "));
+					
+						if (r == true) {
+								$('#CancelButton').val('1');
+								$('#ProductPlacedOrderForm').trigger('submit');
+						//$('#ProductPlacedOrderForm').submit();
+						} else {
+							$('#CancelButton').val('0');
+							txt = "You pressed Cancel!";
+						}
+				});
+		
+				/*$("#cancel_item").confirm({
+					text: "Are you sure you want to delete checked rows?",
+					title: "Confirmation required",
+					confirm: function(button) {
+						
+					},
+					cancel: function(button) {
+						// nothing to do
+					},
+					confirmButton: "Yes I am",
+					cancelButton: "No",
+					post: true,
+					confirmButtonClass: "btn-danger",
+					cancelButtonClass: "btn-default",
+					dialogClass: "modal-dialog modal-lg" // Bootstrap classes for large modal
+				});*/
+  });
+	
 	function showHiddenElements() {
 		$('#ProductPlacedOrderForm').show();
 		$('#heighlighted_block').show();
@@ -926,9 +922,6 @@ echo $this->Html->css('model/submodal.css');
 </script>
 <script>
 	function update_on_demand_quantities(product_id, kiosk_placed_order_id, quantity){
-		//alert(product_id);
-		//alert(kiosk_placed_order_id);
-		//alert(quantity);
 		targeturl = $("#updateQtyURL").val();
 		targeturl += "?product_id="+product_id+"&kiosk_placed_order_id="+kiosk_placed_order_id+"&quantity="+quantity+"&kiosk_id="+<?php echo $kiosk['id'];?>;
 		//alert(targeturl);
@@ -941,11 +934,6 @@ echo $this->Html->css('model/submodal.css');
 			},
 			success: function(response) {
 				var objArr = $.parseJSON(response);
-				if(objArr.status == "1"){
-					;//alert("success");
-				}else{
-					;//alert(objArr.status);
-				}
 				$.unblockUI();
 			}
 		});
@@ -953,27 +941,25 @@ echo $this->Html->css('model/submodal.css');
 </script>
 <script>
 	function updateStatus(orderId,kioskId){
-		targeturl = $("#updateLockURL").val();
-		targeturl += "?id="+orderId;
-		targeturl += "&kiosk_id="+kioskId;
-		$.blockUI({ message: 'Updating Quantity...' });
-		$.ajax({
-			type: 'get',
-			url: targeturl,
-			beforeSend: function(xhr) {
-				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			},
-			success: function(response) {
-				var objArr = $.parseJSON(response);
-				if(objArr.status == "1"){
-					var redirect_url = $("#redirect_url").val();
-					window.location.href = redirect_url;
-				}else{
-					;//alert(objArr.status);
-				}
-				$.unblockUI();
-			}
-		});
+				targeturl = $("#updateLockURL").val();
+				targeturl += "?id="+orderId;
+				targeturl += "&kiosk_id="+kioskId;
+				$.blockUI({ message: 'Updating Quantity...' });
+				$.ajax({
+							type: 'get',
+							url: targeturl,
+							beforeSend: function(xhr) {
+								xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+							},
+							success: function(response) {
+								var objArr = $.parseJSON(response);
+								if(objArr.status == "1"){
+									var redirect_url = $("#redirect_url").val();
+									window.location.href = redirect_url;
+								}
+								$.unblockUI();
+							}
+				});
 	}
 </script>
 
@@ -985,28 +971,25 @@ foreach ($product_new_arr as $key => $product){
 $("#price_<?php echo $key;?>").blur(function(){
 	 var price = $("#price_<?php echo $key;?>").val();
 	 var old_price = $("#price_<?php echo $key;?>").attr("old_price");
-	 
 	 var product_id = <?php echo $product['id'];?>;
 	 var targeturl = $("#check_price").val();
-	 
 	 targeturl += "?id="+product_id;
 	 targeturl += "&price="+price;
 	 $.blockUI({ message: 'Just a moment...' });
+		
 	 $.ajax({
 			type: 'get',
 			url: targeturl,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			},
-			
 			success: function(response) {
 			 $.unblockUI();
 			  var objArr = $.parseJSON(response);
 			  if (objArr.msg == "ok") {
-                
-              }else if(objArr.msg == "error"){
-				 alert("price is less then cost price");
-				 $("#price_<?php echo $key;?>").val(old_price);
+     }else if(objArr.msg == "error"){
+						alert("price is less then cost price");
+						$("#price_<?php echo $key;?>").val(old_price);
 			  }
 			},
 			error: function(e) {
@@ -1021,4 +1004,10 @@ $("#price_<?php echo $key;?>").blur(function(){
 <?php
 }
 ?> 
+</script>
+<?php echo '<script type="text/javascript" src="https://'.ADMIN_DOMAIN.'/js/jquery.colorbox.js"></script>';?>
+<script>
+		$(document).ready(function(){
+		<?php echo $groupStr;?>
+		});
 </script>

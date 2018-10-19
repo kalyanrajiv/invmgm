@@ -895,8 +895,16 @@ class StockTransferController extends AppController{
         }else{
             $kioskOrderStatusDetail = array();
         }
-		$kiosk_placed_order_id = $kioskOrderStatusDetail['kiosk_placed_order_id'];
-		$is_on_demand = $kioskOrderStatusDetail['is_on_demand'];
+        if(array_key_exists('kiosk_placed_order_id', $kioskOrderStatusDetail)){
+            $kiosk_placed_order_id = $kioskOrderStatusDetail['kiosk_placed_order_id'];
+        }else{
+            $kiosk_placed_order_id = 0;
+        }
+        if(array_key_exists('is_on_demand', $kioskOrderStatusDetail)){
+            $is_on_demand = $kioskOrderStatusDetail['is_on_demand'];
+        }else{
+            $is_on_demand = 0;
+        }
 		$requestedTime = "";
         $clone_order = 0;
 		
@@ -1036,8 +1044,11 @@ class StockTransferController extends AppController{
 				$clone_order = 1;
 				$kioskOrderProductremarks = array();
 			}
-	 
-			$kioskOrderStatus = $kioskOrderStatusDetail['status'];
+            if(array_key_exists('status', $kioskOrderStatusDetail)){
+                $kioskOrderStatus = $kioskOrderStatusDetail['status'];
+            }else{
+                $kioskOrderStatus = 0;
+            }
             $users_query = $this->Users->find('list',
                                     [
                                         'keyField' => 'id',

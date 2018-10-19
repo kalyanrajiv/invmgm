@@ -1,13 +1,11 @@
-<?php 
+<?php
+	use Cake\Core\Configure;
+	use Cake\Core\Configure\Engine\PhpConfig;
+	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
 	extract($this->request->query);
 	if(!isset($search_kw)){$search_kw = "";}
 	$sessionBaket = $this->request->Session()->read("stock_taking_basket");
 	$current_page = '';
-	//pr($this->request);die;	
-	//if(array_key_exists('page',$this->request->params['named'])){
-	//	$current_page = $this->request->params['named']['page'];
-	//}
-
 	$stockReference = $this->request->Session()->read("stock_taking_reference");
 	$s_kiosk_id = $this->request->Session()->read("stock_taking_kiosk_id");
 	if( !empty($s_kiosk_id) ){
@@ -15,29 +13,15 @@
 	}else{
 		$kiosk_id = $kioskId;//$kioskId is the first kiosk in the active kiosk list, defined in controller
 	}
+	$update_session_ajax = $this->Url->build(["controller" => "stock-initializers","action" => "update_session_ajax"]);
+	$unset_session_ajax = $this->Url->build(["controller" => "stock-initializers","action" => "unset_session_ajax"]);
 ?>
 <style>
- #remote .tt-dropdown-menu {
-  max-height: 250px;
-  overflow-y: auto;
-}
- #remote .twitter-typehead {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.tt-dataset, .tt-dataset-product {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.row_hover:hover{
- color:blue;
- background-color:yellow;
-}
+ #remote .tt-dropdown-menu {max-height: 250px;overflow-y: auto;}
+ #remote .twitter-typehead {max-height: 250px;overflow-y: auto;}
+.tt-dataset, .tt-dataset-product {max-height: 250px;overflow-y: auto;}
+.row_hover:hover{color:blue;background-color:yellow;}
 </style>
-<?php
-$update_session_ajax = $this->Url->build(["controller" => "stock-initializers","action" => "update_session_ajax"]);
-$unset_session_ajax = $this->Url->build(["controller" => "stock-initializers","action" => "unset_session_ajax"]);
-?>
 <input type='hidden' name='update_session_ajax' id='update_session_ajax' value='<?=$update_session_ajax?>' />
 <input type='hidden' name='unset_session_ajax' id='unset_session_ajax' value='<?=$unset_session_ajax?>' />
 
@@ -223,8 +207,8 @@ $unset_session_ajax = $this->Url->build(["controller" => "stock-initializers","a
 		$absoluteImagePath = $imageDir.$imageName;
 		$LargeimageURL = $imageURL = "/thumb_no-image.png";
 		if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-			$imageURL = "/files/Products/image/".$centralStock->id."/$imageName";
-			$LargeimageURL = "/files/Products/image/".$centralStock->id."/vga_"."$imageName";
+			$imageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/thumb_".$imageName;
+			$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/vga_"."$imageName";
 		}
 		$sellingPrice = $centralStock->selling_price;
 		$productQuantity = '';

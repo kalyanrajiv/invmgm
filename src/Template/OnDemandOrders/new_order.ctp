@@ -1,36 +1,16 @@
 <?php
-use Cake\Core\Configure;
-use Cake\Core\Configure\Engine\PhpConfig;
+ use Cake\Core\Configure;
+ use Cake\Core\Configure\Engine\PhpConfig;
+ $siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+ $currencySymbol = Configure::read('CURRENCY_TYPE');	
+ echo $this->Html->script('smoothness-jquery-ui.min.css');
 ?>
-<head>
-  <?php echo $this->Html->script('smoothness-jquery-ui.min.css');
-  //pr($this->Session->read());
-  ?>
-</head>
-
 <style>
- #remote .tt-dropdown-menu {
-  max-height: 250px;
-  overflow-y: auto;
-}
- #remote .twitter-typehead {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.tt-dataset, .tt-dataset-product {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.row_hover:hover{
- color:blue;
- background-color:yellow;
-}
+ #remote .tt-dropdown-menu {max-height: 250px;overflow-y: auto;}
+ #remote .twitter-typehead {max-height: 250px;overflow-y: auto;}
+.tt-dataset, .tt-dataset-product {max-height: 250px;overflow-y: auto;}
+.row_hover:hover{color:blue;background-color:yellow;}
 </style>
-<?php
-//pr($_SESSION);
-	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
-  $currencySymbol = Configure::read('CURRENCY_TYPE');	
-?>
 <?php
 //pr($this->request['data']);
 //pr($_SESSION);die;
@@ -167,8 +147,8 @@ Once user are sure, no more extra items are required for the day; <br/> Restore 
 		  $imageURL = "/thumb_no-image.png";
 		  $largeImageURL = $imageURL;         
 		  if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-			$imageURL = "$siteBaseURL/files/Products/image/".$product->id."/$imageName";
-			$largeImageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/$largeImageName"; //rasu
+      $imageURL = "$siteBaseURL/files/Products/image/".$product->id."/thumb_".$imageName;
+      $largeImageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/".$largeImageName; //rasu
 		  }
                 
 		  $productQuantity = 1;
@@ -716,19 +696,18 @@ $('#remote .typeahead').typeahead(null, {
 			},
 			success: function(response) {
 				$.unblockUI();
-				
 				var obj = jQuery.parseJSON( response);
 				if (obj  == 'success') {
-                $("#Customerfname").val('');
-				$("#Customerlname").val('');
-				$("#customer_mobile").val('');
-				$("#Customeremail").val('');
-				$("#CustomerZip").val('');
-				$("#CustomerAddress1").val('');
-				$("#CustomerAddress2").val('');
-				$("#CustomerCity").val('');
-				$("#CustomerState").val('');
-                }else{
+     $("#Customerfname").val('');
+     $("#Customerlname").val('');
+     $("#customer_mobile").val('');
+     $("#Customeremail").val('');
+     $("#CustomerZip").val('');
+     $("#CustomerAddress1").val('');
+     $("#CustomerAddress2").val('');
+     $("#CustomerCity").val('');
+     $("#CustomerState").val('');
+    }else{
 					//do nothing  
 				}
 			},

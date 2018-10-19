@@ -1,44 +1,26 @@
 <?php
-use Cake\Core\Configure;
-use Cake\Core\Configure\Engine\PhpConfig;
+	use Cake\Core\Configure;
+	use Cake\Core\Configure\Engine\PhpConfig;
 	$currency = Configure::read('CURRENCY_TYPE');
+	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
 	//$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
 ?>
 <style>
- #remote .tt-dropdown-menu {
-  max-height: 250px;
-  overflow-y: auto;
-}
- #remote .twitter-typehead {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.tt-dataset, .tt-dataset-product {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.row_hover:hover{
- color:blue;
- background-color:yellow;
-}
+ #remote .tt-dropdown-menu {max-height: 250px;overflow-y: auto;}
+ #remote .twitter-typehead {max-height: 250px;overflow-y: auto;}
+.tt-dataset, .tt-dataset-product {max-height: 250px;overflow-y: auto;}
+.row_hover:hover{color:blue;background-color:yellow;}
 </style>
-
-<?php
-	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
-?>
 <div class="stock index">
 	 
-	<?php
+<?php
 	if(!empty($this->request->query['search_kw'])){
 		$value = $this->request->query['search_kw'];
 	}else{
 		$value = '';
 	}
-	if(empty($this->request->query)){
-		$displayType = "more_than_zero";
-		
-	}
-	?>
+	if(empty($this->request->query)){$displayType = "more_than_zero";}
+?>
 	<form action="<?php echo $this->request->webroot; ?>stock/search" method = 'get'>
 		<fieldset>
 			<legend>Search</legend>			
@@ -132,8 +114,8 @@ use Cake\Core\Configure\Engine\PhpConfig;
 				<?php
 				$groupStr = "";
 				foreach ($products as $key => $product):
-				$groupStr.="\n$(\".group{$key}\").colorbox({rel:'group{$key}'});";
-                //pr($categoryName);die;
+					$groupStr.="\n$(\".group{$key}\").colorbox({rel:'group{$key}'});";
+     //pr($categoryName);die;
 				if(array_key_exists($product['category_id'],$categoryName)){
 					$catName = $categoryName[$product['category_id']];
 				}else{
@@ -206,17 +188,17 @@ use Cake\Core\Configure\Engine\PhpConfig;
 				$imageURL = "/thumb_no-image.png";
                 $product_id = $product['id'];
 				
-				$LargeimageURL = "";
+				$largeimageURL = "";
 				if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
 				
 					//$applicationURL = $this->html->url('/', true);
-					//$imageURL = $applicationURL."files/product/image/".$product['Product']['id']."/thumb_$imageName";
-					$imageURL = "$siteBaseURL/files/Products/image/".$product['id']."/$imageName"; //rasu
-					$LargeimageURL = "$siteBaseURL/files/Products/image/".$product['id']."/vga_"."$imageName"; //rasu
+					//$imageURL = $applicationURL."files/product/image/".$product['Product']['id']."/{thumb_}$imageName";
+					$imageURL = "$siteBaseURL/files/Products/image/".$product['id']."/thumb_".$imageName; //rasu
+					$largeimageURL = "$siteBaseURL/files/Products/image/".$product['id']."/vga_"."$imageName"; //rasu
 				}
 					echo $this->Html->link(
 							  $this->Html->image($imageURL, ['fullBase' => true,'width' => '100px','height' => '100px']), //rasu
-							  $LargeimageURL,
+							  $largeimageURL,
 							  ['escapeTitle' => false, 'title' => $product['product'],'class' => "group{$key}"]
 							 );
 

@@ -1,6 +1,6 @@
 <?php
-use Cake\Core\Configure;
-use Cake\Core\Configure\Engine\PhpConfig;
+	use Cake\Core\Configure;
+	use Cake\Core\Configure\Engine\PhpConfig;
 	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
 ?>
 <?php if(!isset($search_kw)){$search_kw = "";}?>
@@ -169,13 +169,13 @@ use Cake\Core\Configure\Engine\PhpConfig;
 				$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$product->id.DS;
 				$imageName = $product->image;
 				$absoluteImagePath = $imageDir.$imageName;
-				$imageURL = "/thumb_no-image.png";
+				$LargeimageURL = $imageURL = "/thumb_no-image.png";
                 //echo $absoluteImagePath;die;
 				if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
 					//$applicationURL = $this->html->url('/', true);
 					//$imageURL = $applicationURL."files/product/image/".$product['Product']['id']."/thumb_$imageName";
-					$imageURL = "$siteBaseURL/files/Products/image/".$product->id."/$imageName"; //rasu
-					$LargeimageURL = "$siteBaseURL/files/Products/image/".$product->id."/vga_"."$imageName";
+					$imageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/thumb_".$imageName; //rasu
+					$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/vga_"."$imageName";
 				}
 					
 					echo $this->Html->link(

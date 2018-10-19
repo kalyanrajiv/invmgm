@@ -1,20 +1,13 @@
+<?php
+ use Cake\Core\Configure;
+ use Cake\Core\Configure\Engine\PhpConfig;
+ $siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+?>
 <style>
- #remote .tt-dropdown-menu {
-  max-height: 250px;
-  overflow-y: auto;
-}
- #remote .twitter-typehead {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.tt-dataset, .tt-dataset-product {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.row_hover:hover{
- color:blue;
- background-color:yellow;
-}
+ #remote .tt-dropdown-menu {max-height: 250px;overflow-y: auto;}
+ #remote .twitter-typehead {max-height: 250px;overflow-y: auto;}
+.tt-dataset, .tt-dataset-product {max-height: 250px;overflow-y: auto;}
+.row_hover:hover{color:blue;background-color:yellow;}
 </style>
 
 <fieldset id="cart_fieldset">	    
@@ -27,7 +20,6 @@
 							<th>Title</th>
 							<th>Unit Price</th>
 							<th>Qty</th>
-							
 							<th>Edit</th>
 						</tr>
 					</table>
@@ -36,14 +28,10 @@
 <?php
 	extract($this->request->query);
 	if(!isset($search_kw)){$search_kw = "";}
-	if(empty($this->request->query)){
-		$displayType = "more_than_zero";
-		
-	}
+	if(empty($this->request->query)){$displayType = "more_than_zero";}
 	$searchQueryUrl = "";
 	$searchKw = $categoryQuery = $categoryqryStr = '';
 	if(!empty($this->request->query)){
-	
 		if(array_key_exists('search_kw',$this->request->query)){
 			$searchKw = $this->request->query['search_kw'];
 		}
@@ -54,7 +42,6 @@
 				$categoryqryStr.="&category%5B%5D=$categoryqry";
 			}
 		}
-		
 		$searchQueryUrl = "/search?search_kw=$searchKw$categoryqryStr&display_type=$displayType&submit=Search+Product";
 	} 
 ?>
@@ -62,10 +49,11 @@
 	Are you sure you want to delete item from cart?
 </div>
 
-<?php $delte_cart = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'delete_from_cart'],true);
-$update_cart = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'update_cart'],true);
-$cartURL = $add_2_cart_short = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'add_2_cart_short'],true);
-$restore_cart = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'restore_cart'],true);
+<?php
+  $delte_cart = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'delete_from_cart'],true);
+  $update_cart = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'update_cart'],true);
+  $cartURL = $add_2_cart_short = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'add_2_cart_short'],true);
+  $restore_cart = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'restore_cart'],true);
 ?>
 <div id="nothing-to-restore" title="Nothing to restore. Cart is empty!" id='qtyAdjusted'>Nothing to restore. Cart is empty!</div>
 <input type='hidden' name='restore_cart' id='restore_cart' value='<?=$restore_cart?>' />
@@ -75,19 +63,11 @@ $restore_cart = $this->Url->build(['controller' => 'stock-transfer', 'action' =>
 <input type='hidden' name='add_to_cart_short' id='add_to_cart_short' value='<?=$cartURL?>' />
 <div id="out-of-stock" title="Out of Stock">Either Product is out of stock Or Invalid Code!!!</div>
 <div class="centralStocks index" style="width: 98% !important;">
-
-   <div id="idVal">
-  
-</div>
-</script>
-	<?php
-	$cartURL = $add_2_cart_short = $this->Url->build(['controller' => 'stock-transfer', 'action' => 'add_2_cart_short'],true);
-	?>
-		<div class="search_div">
+   <div id="idVal"></div>
+   <div class="search_div">
 			<fieldset >
 				<legend>Search</legend>
 				<table>
-				 
 					<tr>
 					 <td style="width: 0px"><input type = "text" value = '1' name = "quantity" id='scanner_qty' placeholder = "Quantity" style = "width:29px;height:20px;" autofocus/></td>
 						<td>
@@ -121,7 +101,7 @@ $restore_cart = $this->Url->build(['controller' => 'stock-transfer', 'action' =>
 		</div>
 	
 	<?php
-	       $sessionKioskId = $this->request->Session()->read('kiosk_id');
+	 $sessionKioskId = $this->request->Session()->read('kiosk_id');
 		$sessionBaket = $this->request->Session()->read("Basket");
 		$kiosk_id = "";
 		$s_kiosk_id = $this->request->Session()->read("kioskId");
@@ -250,10 +230,10 @@ $restore_cart = $this->Url->build(['controller' => 'stock-transfer', 'action' =>
 		$imageName =  $centralStock->image;
 		$absoluteImagePath = $imageDir.$imageName;
 		$imageURL = "/thumb_no-image.png";
-		$LargeimageURL = "/vga_thumb_no-image.png";
+		$largeImageURL = "/vga_thumb_no-image.png";
 		if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-			$imageURL = "/files/Products/image/".$centralStock->id."/$imageName";
-			$LargeimageURL = "/files/Products/image/".$centralStock->id."/vga_"."$imageName";
+			$imageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/thumb_".$imageName;
+			$largeImageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/vga_"."$imageName";
 		}
 		$productQuantity = "";
 		$productPrice = $centralStock->selling_price;
@@ -285,7 +265,7 @@ $restore_cart = $this->Url->build(['controller' => 'stock-transfer', 'action' =>
 		<td><?php
 			echo $this->Html->link(
 					$this->Html->image($imageURL, array('fullBase' => true,'width' => '100px','height' => '100px')),
-					$LargeimageURL,
+					$largeImageURL,
 					array('escapeTitle' => false, 'title' => $centralStock->product,'class' => "group{$key}")
 				);
 			?>

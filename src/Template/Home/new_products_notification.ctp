@@ -1,7 +1,9 @@
 <h3>Upcoming Products</h3>
 <?php
-use Cake\I18n\Time;
-	//$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+	use Cake\Core\Configure;
+	use Cake\Core\Configure\Engine\PhpConfig;
+	use Cake\I18n\Time;
+	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
 	$path = realpath(dirname(__FILE__));
 	$adminSite = false;
     if (strpos($path, ADMIN_DOMAIN) !== false) {
@@ -10,11 +12,9 @@ use Cake\I18n\Time;
     }else{
         $sitePath = 'mbwaheguru.co.uk';
     }
-	$www_root = "/var/www/vhosts/{$sitePath}/httpdocs/app/webroot/";
 	$group1Str = $group2Str = "";
 	//replace WWW_ROOT by this code because of sub-domain or add it to config
-?>
-<?php
+
     if($productNofification){
 			$tableHTML = "";
 			$tableHTML1 = "";
@@ -40,8 +40,8 @@ use Cake\I18n\Time;
 				$imageURL = "/thumb_no-image.png";
 				$largeImageURL = $imageURL;    
 				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-                      $imageURL = "$siteBaseURL/files/Products/image/".$productNotice['id']."/$imageName";
-					  $largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id']."/$largeImageName"; //rasu
+                      $imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id'].DS."thumb_".$imageName;
+					  $largeImageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id'].DS.$largeImageName; //rasu
 				}
 				$image =  $this->Html->link(
 					$this->Html->image($imageURL, array('fullBase' => true,'escapeTitle' => false,'style' => 'width:80px;height:80px;', 'title' => $productNotice['Product'])),

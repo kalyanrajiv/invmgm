@@ -1,3 +1,8 @@
+<?php
+	use Cake\Core\Configure;
+	use Cake\Core\Configure\Engine\PhpConfig;	
+	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+?>
 <div class="stock index">
 	<?php if(!isset($search_kw)){$search_kw = "";}?>
 	 
@@ -119,8 +124,8 @@
 				if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
 					//$applicationURL = $this->html->url('/', true);
 					//$imageURL = $applicationURL."files/product/image/".$product['Product']['id']."/thumb_$imageName";
-					$imageURL = "/files/Products/image/".$product->id."/$imageName";
-					$LargeimageURL = "/files/Products/image/".$product->id."/vga_"."$imageName";
+					$imageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/thumb_".$imageName;
+					$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/vga_"."$imageName";
 				}
 					
 					echo $this->Html->link(

@@ -1,20 +1,13 @@
+<?php
+ use Cake\Core\Configure;
+ use Cake\Core\Configure\Engine\PhpConfig;
+ $siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+?>
 <style>
- #remote .tt-dropdown-menu {
-  max-height: 250px;
-  overflow-y: auto;
-}
- #remote .twitter-typehead {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.tt-dataset, .tt-dataset-product {
-  max-height: 250px;
-  overflow-y: auto;
-}
-.row_hover:hover{
- color:blue;
- background-color:yellow;
-}
+ #remote .tt-dropdown-menu {max-height: 250px;overflow-y: auto;}
+ #remote .twitter-typehead {max-height: 250px;overflow-y: auto;}
+.tt-dataset, .tt-dataset-product {max-height: 250px;overflow-y: auto;}
+.row_hover:hover{color:blue;background-color:yellow;}
 </style>
 <?php #echo $this->Html->script('jquery.printElement');
 $checked = '';//for showing checkbox checked below
@@ -238,17 +231,17 @@ if(!$stock_level_session){
 					$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$product->id.DS;
 					$imageName =  $product->image;
 					$absoluteImagePath = $imageDir.$imageName;
-					$LargeimageURL = $imageURL = "/thumb_no-image.png";
+					$largeImageURL = $imageURL = "/thumb_no-image.png";
 					if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
 						//$applicationURL = $this->html->url('/', true);
 						//$imageURL = $applicationURL."files/product/image/".$product['Product']['id']."/thumb_$imageName";
-						$imageURL = "/files/Products/image/".$product->id."/$imageName";
-						$LargeimageURL = "/files/Products/image/".$product->id."/vga_"."$imageName";
+						$imageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/thumb_".$imageName;
+						$largeImageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/vga_"."$imageName";
 					}
 						
 						echo $this->Html->link(
 								  $this->Html->image($imageURL, array('fullBase' => true, 'style' => 'width: 40px; height: 40px;')),
-								  $LargeimageURL,
+								  $largeImageURL,
 								  array('escapeTitle' => false, 'title' => $product->product,'class' => "group{$key}")
 								 );
 	

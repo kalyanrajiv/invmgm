@@ -1,61 +1,50 @@
-<?php
-use Cake\Core\Configure;
-use Cake\Core\Configure\Engine\PhpConfig;
-?>
 <style>
 @-webkit-keyframes blink {
-    50% {
-        background: rgba(255, 0, 0, 0.5);
-    }
+    50% {background: rgba(255, 0, 0, 0.5);}
 }
 @-moz-keyframes blink {
-    50% {
-        background: rgba(255, 0, 0, 0.5);
-    }
+    50% {background: rgba(255, 0, 0, 0.5);}
 }
 @keyframes blink {
-    50% {
-        background: rgba(255, 0, 0, 0.5);
-    }
+    50% {background: rgba(255, 0, 0, 0.5);}
 }
 .blink {
     -webkit-animation-direction: normal;
-    -webkit-animation-duration: 5s;
+    -webkit-animation-duration: 2s;
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-name: blink;
     -webkit-animation-timing-function: linear;
     -moz-animation-direction: normal;
-    -moz-animation-duration: 5s;
+    -moz-animation-duration: 2s;
     -moz-animation-iteration-count: infinite;
     -moz-animation-name: blink;
     -moz-animation-timing-function: linear;
     animation-direction: normal;
-    animation-duration: 5s;
+    animation-duration: 2s;
     animation-iteration-count: infinite;
     animation-name: blink;
     animation-timing-function: linear;
 }
 </style>
 <div class="blink" style="width: 185px;">
-<h3 >New Arrivals(<?php echo $new_arrival_count;?>) &raquo; </h3>
+    <h3 >New Arrivals(<?php echo $new_arrival_count;?>) &raquo; </h3>
 </div>
 <?php
-$main_domain = Configure::read('SITE_BASE_URL');
-$current_url = "http://".$_SERVER['HTTP_HOST'];
-    //echo ROOT; //=>/var/www/vhosts/hpwaheguru.co.uk/httpdocs
-    //echo "<br/>".CORE_PATH; //=> /var/www/vhosts/hpwaheguru.co.uk/httpdocs/vendor/cakephp/cakephp/
+    use Cake\Core\Configure;
+    use Cake\Core\Configure\Engine\PhpConfig;
     use Cake\I18n\Time;
-    //$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+    $siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+    $main_domain = Configure::read('SITE_BASE_URL');
+    $current_url = "http://".$_SERVER['HTTP_HOST'];
+    
     $path = realpath(dirname(__FILE__));
     $adminSite = false;
-    if (strpos($path,ADMIN_DOMAIN) !== false) {
+    if (strpos($path, ADMIN_DOMAIN) !== false) {
         $sitePath = ADMIN_DOMAIN;
         $adminSite = true;
     }else{
         $sitePath = $siteBaseUrl;
     }
-    $sitePath = str_replace("http://", "", $sitePath);
-    $www_root = "/var/www/vhosts/{$sitePath}/httpdocs/app/webroot/";
     $group1Str = $group2Str = "";
     //replace WWW_ROOT by this code because of sub-domain or add it to config
 ?>
@@ -66,10 +55,10 @@ $current_url = "http://".$_SERVER['HTTP_HOST'];
 <a href="#" id="clear" style="display: ruby-text-container;float: right;margin-bottom: 10px;margin-top: 13px;font-size: 18px;">Clear Session</a>&nbsp;&nbsp;
 <a href="#" id="create" style="display: ruby-text-container;float: right;margin-bottom: 10px;margin-top: 13px;font-size: 18px;margin-right: 27px;">Create Demand Order</a> 
 <?php
-$update_session_ajax = $this->Url->build(["controller" => "home","action" => "update_session_ajax"]);
-$unset_session_ajax = $this->Url->build(["controller" => "home","action" => "unset_session_ajax"]);
-$clear_cart = $this->Url->build(['controller' => 'home', 'action' => 'clear_cart_ondemand'],true);
-$create_order = $this->Url->build(['controller' => 'home', 'action' => 'create_order'],true);
+    $update_session_ajax = $this->Url->build(["controller" => "home","action" => "update_session_ajax"]);
+    $unset_session_ajax = $this->Url->build(["controller" => "home","action" => "unset_session_ajax"]);
+    $clear_cart = $this->Url->build(['controller' => 'home', 'action' => 'clear_cart_ondemand'],true);
+    $create_order = $this->Url->build(['controller' => 'home', 'action' => 'create_order'],true);
 ?>
 
 <input type='hidden' name='update_session_ajax' id='update_session_ajax' value='<?=$update_session_ajax?>' />
@@ -78,70 +67,74 @@ $create_order = $this->Url->build(['controller' => 'home', 'action' => 'create_o
 <input type='hidden' name='create_order' id='create_order' value='<?=$create_order?>' />
 
 <?php
-//pr($productNofification);
     if($productNofification){
-			$tableHTML = "";
-			$tableHTML1 = "";
-			$count = count($productNofification);
-			$halfCount = $count/2;
-			$firstHalf = array_slice($productNofification,0,$halfCount,true);
-			$secondHalf = array_slice($productNofification,$halfCount,$count,true);
-			//pr($firstHalf);
-			//pr($secondHalf);die;
-			foreach($firstHalf as $key => $productNotice){
-                $group1Str.="\n$(\".group1{$key}\").colorbox({rel:'group1{$key}'});";
-				$selling_price = 0;
-				//pr($productNotice);die;
-				$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$productNotice['id'].DS;
-				$imageName = $productNotice['image'];
-                
-                $largeImageName = 'vga_'.$imageName;
-				$absoluteImagePath = $imageDir.$imageName;
-				$imageURL = "/thumb_no-image.png";
-				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-					$imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id']."/$imageName";
-				}
-                $imageURL = "/thumb_no-image.png";
-				$largeImageURL = $imageURL;    
-				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-                      $imageURL = "$siteBaseURL/files/Products/image/".$productNotice['id']."/$imageName";
-					  $largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id']."/$largeImageName"; //rasu
-				}
-				$image =  $this->Html->link(
-					$this->Html->image($imageURL, array('fullBase' => true,'escapeTitle' => false,'style' => 'width:80px;height:80px;', 'title' => $productNotice['Product'])),
-					$largeImageURL,
-										 array('escapeTitle' => false, 'title' => $productNotice['Product'],'class' => "group1{$key}")
-                            );
+        $tableHTML = "";
+        $tableHTML1 = "";
+        $count = count($productNofification);
+        $halfCount = $count/2;
+        $firstHalf = array_slice($productNofification,0,$halfCount, true);
+        $secondHalf = array_slice($productNofification,$halfCount, $count, true);
+        
+        foreach($firstHalf as $key => $productNotice){
+            $group1Str.="\n$(\".group1{$key}\").colorbox({rel:'group1{$key}'});";
+            $selling_price = 0;
+            //pr($productNotice);die;
+            $imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$productNotice['id'].DS;
+            $imageName = $productNotice['image'];
+            
+            $largeImageName = 'vga_'.$imageName;
+            $absoluteImagePath = $imageDir.$imageName;
+            $imageURL = "/thumb_no-image.png";
+            if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
+                $imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id']."/$imageName";
+            }
+            $imageURL = "/thumb_no-image.png";
+            $largeImageURL = $imageURL;    
+            if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
+                $imageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS."thumb_".$imageName;
+                $largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS.$largeImageName; //rasu
+            }
+            
+            $image =  $this->Html->link(
+                                        $this->Html->image($imageURL, array(
+                                                                            'fullBase' => true,
+                                                                            'escapeTitle' => false,
+                                                                            'style' => 'width:80px;height:80px;',
+                                                                            'title' => $productNotice['Product'])
+                                                           ),
+                                        $largeImageURL,
+                                        array('escapeTitle' => false, 'title' => $productNotice['Product'],'class' => "group1{$key}")
+                                        );
+            
+            //$productNotice['created']->i18nFormat([\IntlDateFormatter::FULL, \IntlDateFormatter::FULL]);
+            $productNotice['created']->i18nFormat(
+                                                        [\IntlDateFormatter::FULL, \IntlDateFormatter::FULL]
+                                                );
+            $created =  $productNotice['created']->i18nFormat('dd-MM-yyyy HH:mm:ss');
+            $created = date("d-m-y h:i a",strtotime($created)); 
 				
-//				 $productNotice['created']->i18nFormat(
-//                                                                [\IntlDateFormatter::FULL, \IntlDateFormatter::FULL]
-//                                                        );
-					$productNotice['created']->i18nFormat(
-                                                                [\IntlDateFormatter::FULL, \IntlDateFormatter::FULL]
-                                                        );
-							$created =  $productNotice['created']->i18nFormat('dd-MM-yyyy HH:mm:ss');
-                            $created = date("d-m-y h:i a",strtotime($created)); 
-				
-				$product_id = $productNotice['id'];
-				$product_code = $productNotice['product_code'];
-				$quantity = $productNotice['quantity'];
-				$disable = $checked = "";
-				 $qty = 1;
-				if(!empty($session_basket)){
-					if(array_key_exists((int)$product_code,$session_basket)){
-						
-						$checked = "checked";
-						$disable = "disabled='disabled'";
-						$qty = $session_basket[trim($product_code)]['quantity'];
-					}
-				}
-				$selling_price = $selling_price_arr[$productNotice['id']];
-                $withVATSP = $selling_price;//The gross price, including VAT.
-				$vatDivisor = 1 + ($vat / 100);	//Divisor (for our math).
-				$priceBeforeVat = $withVATSP / $vatDivisor; //Determine the price before VAT.
-				$vatAmount = $withVATSP - $priceBeforeVat;
-				if(!$adminSite){$priceBeforeVat =$withVATSP;}
-				$tableHTML .= <<<TABLE
+            $product_id = $productNotice['id'];
+            $product_code = $productNotice['product_code'];
+            $quantity = $productNotice['quantity'];
+            $disable = $checked = "";
+            $qty = 1;
+            
+            if(!empty($session_basket)){
+                if(array_key_exists((int)$product_code,$session_basket)){
+                    
+                    $checked = "checked";
+                    $disable = "disabled='disabled'";
+                    $qty = $session_basket[trim($product_code)]['quantity'];
+                }
+            }
+            $selling_price = $selling_price_arr[$productNotice['id']];
+            $withVATSP = $selling_price;//The gross price, including VAT.
+            $vatDivisor = 1 + ($vat / 100);	//Divisor (for our math).
+            $priceBeforeVat = $withVATSP / $vatDivisor; //Determine the price before VAT.
+            $vatAmount = $withVATSP - $priceBeforeVat;
+            if(!$adminSite){$priceBeforeVat =$withVATSP;}
+            
+			$tableHTML .= <<<TABLE
 						<tr>
 							<td>&raquo; </td>
 							<td>$image</td>
@@ -175,29 +168,33 @@ TABLE;
                 $imageURL = "/thumb_no-image.png";
 				$largeImageURL = $imageURL;    
 				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-                      $imageURL = "$siteBaseURL/files/Products/image/".$productNotice['id']."/$imageName";
-					  $largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id']."/$largeImageName"; //rasu
+                      $imageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS."thumb_".$imageName;
+					  $largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS.$largeImageName; //rasu
 				}
 				$image =  $this->Html->link(
-					$this->Html->image($imageURL, array('fullBase' => true,'escapeTitle' => false,'style' => 'width:80px;height:80px;', 'title' => $productNotice['Product'])),
-					$largeImageURL,
-										 array('escapeTitle' => false, 'title' => $productNotice['Product'],'class' => "group2{$key}")
-                            );
+                                            $this->Html->image($imageURL, array(
+                                                                                'fullBase' => true,
+                                                                                'escapeTitle' => false,
+                                                                                'style' => 'width:80px;height:80px;',
+                                                                                'title' => $productNotice['Product'])
+                                                                            ),
+                                                                $largeImageURL,
+                                                                array('escapeTitle' => false, 'title' => $productNotice['Product'],'class' => "group2{$key}")
+                                        );
 				
 				
 				
 				$productNotice['created']->i18nFormat(
                                                                 [\IntlDateFormatter::FULL, \IntlDateFormatter::FULL]
                                                         );
-							$created =  $productNotice['created']->i18nFormat('dd-MM-yyyy HH:mm:ss');
-                            $created = date("d-m-y h:i a",strtotime($created)); 
-				
-				
+                $created =  $productNotice['created']->i18nFormat('dd-MM-yyyy HH:mm:ss');
+                $created = date("d-m-y h:i a",strtotime($created));
 				$product_id = $productNotice['id'];
 				$product_code = $productNotice['product_code'];
 				$quantity = $productNotice['quantity'];
 				$disable = $checked = "";
 				$qty = 1;
+                
 				if(!empty($session_basket)){
 					if(array_key_exists((int)$product_code,$session_basket)){
 						

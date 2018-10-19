@@ -1,6 +1,8 @@
 <?php 
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
+$currency = Configure::read('CURRENCY_TYPE');
+$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
 $jQueryURL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
 if(defined('URL_SCHEME')){
 	$jQueryURL = URL_SCHEME."ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
@@ -10,9 +12,8 @@ if(defined('URL_SCHEME')){
 <?php
 	echo $this->Html->script('jquery.printElement');
 	echo $this->Html->script('jquery.blockUI');
-	$currency = Configure::read('CURRENCY_TYPE');
-	//$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
 	
+	//$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
 	$path = dirname(__FILE__);
 	$isboloRam = strpos($path,"mbwaheguru");
 	
@@ -28,10 +29,6 @@ if(defined('URL_SCHEME')){
 	 }
 	
 ?>
-
-
-
-
 <div class="centralStocks index">	
     <?php $lock = $on_demand_orders_data['lock_status'];
 	if($lock == 1){ ?>
@@ -109,9 +106,10 @@ if(defined('URL_SCHEME')){
 				<tbody>
 	<?php $productRemarks = "";
 	$counter = 0;
-	
+	$groupStr = "";
 	foreach ($product_new_arr as $key => $product):
-	$counter++;
+		$groupStr.="\n$(\".group{$key}\").colorbox({rel:'group{$key}'});";
+		$counter++;
 		$productID = (int)$product['id'];
 		$quantity2dispatch = 0;
 		if(
@@ -141,20 +139,21 @@ if(defined('URL_SCHEME')){
 		
 		$userRemarks = $remarksArr[$productID];
 		$truncatedProduct =  \Cake\Utility\Text::truncate(
-                                                                        $product['product'],
-                                                                        30,
-                                                                        [
-                                                                                'ellipsis' => '...',
-                                                                                'exact' => false
-                                                                        ]
-                                                                );
+															$product['product'],
+															30,
+															[
+																	'ellipsis' => '...',
+																	'exact' => false
+															]
+													);
 		
 		$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$product['id'].DS;
 		$imageName = $product['image'];
 		$absoluteImagePath = $imageDir.$imageName;
 		$imageURL = "/thumb_no-image.png";
 		if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-			$imageURL = "/files/Products/image/".$product['id']."/$imageName";
+			$imageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/thumb_".$imageName;
+			$largeimageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/vga_"."$imageName"; //rasu
 		}
 		$productQuantity = "";
 		$productPrice = $product['selling_price'];
@@ -211,13 +210,11 @@ if(defined('URL_SCHEME')){
 		</td>
 		<?php if($forprint == "Yes"){?>
 		<td><?php
-		
 			echo $this->Html->link(
 							$this->Html->image($imageURL, array('fullBase' => true,'height'=>'64px','width'=>'64px')),
-							array('controller' => 'products','action' => 'edit', $product['id']),
-							array('escapeTitle' => false, 'title' => $product['product'])
+							$largeimageURL,
+							array('escapeTitle' => false, 'title' => $product['product'], 'class' => "group{$key}")
 					);
-		
 			?>
 		</td>
 		<?php } ?>
@@ -753,4 +750,10 @@ if(defined('URL_SCHEME')){
 			}
 		});
 	}
+</script>
+<?php echo '<script type="text/javascript" src="https://'.ADMIN_DOMAIN.'/js/jquery.colorbox.js"></script>';?>
+<script>
+	$(document).ready(function(){
+	<?php echo $groupStr;?>
+	});
 </script>

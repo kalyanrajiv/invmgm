@@ -1,71 +1,61 @@
 <?php
-use Cake\Core\Configure;
-use Cake\Core\Configure\Engine\PhpConfig;
-
-$jQueryURL = "https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
-if(defined('URL_SCHEME')){
-	$jQueryURL = URL_SCHEME."ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
-}
+		use Cake\Core\Configure;
+		use Cake\Core\Configure\Engine\PhpConfig;
+		$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+		$currency = Configure::read('CURRENCY_TYPE');
+		$jQueryURL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
+		if(defined('URL_SCHEME')){
+		$jQueryURL = URL_SCHEME."ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
+		}
 ?>
 <script type="text/javascript" src="<?php echo $jQueryURL;?>"></script>
-
 <?php
-echo $this->Html->script('jquery.blockUI');
-echo $this->Html->script('jquery.printElement');
-
-echo $this->Html->css('model/style.css');
-echo $this->Html->css('model/submodal.css');
- echo $this->Html->script('model/submodalsource.js');
- echo $this->Html->script('model/submodal.js');
-
-$url = $this->Url->build(['controller' => 'stockTransfer', 'action' => 'order_qty_update'],true);
+		echo $this->Html->script('jquery.blockUI');
+		echo $this->Html->script('jquery.printElement');
+		echo $this->Html->css('model/style.css');
+		echo $this->Html->css('model/submodal.css');
+		echo $this->Html->script('model/submodalsource.js');
+		echo $this->Html->script('model/submodal.js');
+		$url = $this->Url->build(['controller' => 'stockTransfer', 'action' => 'order_qty_update'],true);
 ?>
 <input type="hidden" value="<?=$url;?>" name="url" id="update_qty_url" />
-<?php
-	$currency = Configure::read('CURRENCY_TYPE');
-	//$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
-?>
-<?php
-	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
-?>
 <div class="products index">
 	<input type='button' id='printSelected' name='print' value='Print Receipt' style='width:200px;' align='center' />
 	<?php
-    //pr($products[0]);
-    //pr($kiosks);die;
-	if(count($products) >=0 ){
-		$kioskNme = $kiosks[$products[0]['center_order']['kiosk_id']];
-	}else{
-		$kioskNme = 'Kiosk';
-	}
-	if($kioskOrderStatus == '1'){
-		echo $this->Html->link(__('Kiosk to WH Trnsient'), array('controller' => 'kiosk_orders', 'action' => 'transient_kiosk_orders'));
-		}else{
-			echo $this->Html->link(__('Kiosk to WH Confirmed'), array('controller' => 'kiosk_orders', 'action' => 'confirmed_kiosk_orders'));
-		}
-		echo "<br/>";
-     $dispatched_qty = $total_req = $count = 0;
-	foreach($products as $key1 => $product1){
-        //pr($product1);die;
-		$count++;
-		$dispatched_qty += $product1['quantity'];
-		//if((int)$kiosk_placed_order_id){
-			//if(array_key_exists($product1['Product']['id'],$quantityRequestedArr)){
-			//	$total_req += $quantityRequestedArr[$product1['Product']['id']];
-			//}	
-		//}
-	}
-	?>
+			if(count($products) >=0 ){
+				$kioskNme = $kiosks[$products[0]['center_order']['kiosk_id']];
+			}else{
+				$kioskNme = 'Kiosk';
+			}
+			if($kioskOrderStatus == '1'){
+				echo $this->Html->link(__('Kiosk to WH Trnsient'), array('controller' => 'kiosk_orders', 'action' => 'transient_kiosk_orders'));
+			}else{
+				echo $this->Html->link(__('Kiosk to WH Confirmed'), array('controller' => 'kiosk_orders', 'action' => 'confirmed_kiosk_orders'));
+			}
+			echo "<br/>";
+   $dispatched_qty = $total_req = $count = 0;
+			
+			foreach($products as $key1 => $product1){
+					//pr($product1);die;
+					$count++;
+					$dispatched_qty += $product1['quantity'];
+					//if((int)$kiosk_placed_order_id){
+					//if(array_key_exists($product1['Product']['id'],$quantityRequestedArr)){
+					//	$total_req += $quantityRequestedArr[$product1['Product']['id']];
+					//}	
+					//}
+			}
+?>
 	<div id='printDiv'>
 		<strong><?php #pr($products);die;
     echo __('<span style="font-size: 20px;color: red;">Transferred Items</span> <span style="font-size: 17px;">('.ucfirst($kioskNme).' to Warehouse)</span>'); ?></strong>
 			    
-    <?php 
-        if(count($products) >=0 ){
-	$kioskName = $kiosks[$products[0]['center_order']['kiosk_id']];
-            $dispatchedOn = $this->Time->format('jS M, Y h:i A', $products[0]['center_order']['dispatched_on'],null,null); 
-            echo "<h4>Order Details for order id: ".$products[0]['kiosk_order_id']." [Dispatch On: ".$dispatchedOn." by ".ucfirst($kioskName)."]</h4>";
-        }
+<?php 
+			if(count($products) >=0 ){
+					$kioskName = $kiosks[$products[0]['center_order']['kiosk_id']];
+							$dispatchedOn = $this->Time->format('jS M, Y h:i A', $products[0]['center_order']['dispatched_on'],null,null); 
+							echo "<h4>Order Details for order id: ".$products[0]['kiosk_order_id']." [Dispatch On: ".$dispatchedOn." by ".ucfirst($kioskName)."]</h4>";
+			}
 		echo "<h4>Total Product # <span style='color: blue;'>".$count."</span>  Total Dispatched Quantity # <span style='color: blue;'>".$dispatched_qty."</span>"; 
 	if($products[0]['center_order']['status'] == 2){
 	    //confirmed order
@@ -99,12 +89,12 @@ $url = $this->Url->build(['controller' => 'stockTransfer', 'action' => 'order_qt
     
     <tbody>        
 	<?php
-	$counter = 0;
-	//pr($products);
-	foreach ($products as $key => $product): ?>
-	<?php $currentPageNumber = $this->Paginator->current();
-	$counter++;
-	?>
+	$counter = 0;$groupStr = "";
+	foreach ($products as $key => $product): 
+		$currentPageNumber = $this->Paginator->current();
+		$counter++;
+		$groupStr.="\n$(\".group{$key}\").colorbox({rel:'group{$key}'});";
+?>
 	<?php $row_id = $product['id']?>
 	<?php
                 $truncatedProduct = \Cake\Utility\Text::truncate(
@@ -138,36 +128,34 @@ $url = $this->Url->build(['controller' => 'stockTransfer', 'action' => 'order_qt
                     $imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$product['product']['id'].DS;
                     $imageName = $product['product']['image'];
                     $absoluteImagePath = $imageDir.$imageName;
-                    $LargeimageURL = $imageURL = "/thumb_no-image.png";
+                    $largeimageURL = $imageURL = "/thumb_no-image.png";
                     if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-                        $imageURL = "$siteBaseURL/files/Products/image/".$product['product']['id']."/$imageName";
-						$LargeimageURL = "$siteBaseURL/files/Products/image/".$product['product']['id']."/vga_"."$imageName";
+																						$imageURL = "$siteBaseURL/files/Products/image/".$product['product']['id']."/thumb_".$imageName;
+																						$largeimageURL = "$siteBaseURL/files/Products/image/".$product['product']['id']."/vga_".$imageName;
                     }
                             
                     echo $this->Html->link(
-                                $this->Html->image($imageURL, array('fullBase' => true,'width' => '100px','height' => '100px')),
-                                $imageURL,
-                                array('escapeTitle' => false, 'title' => $product['product']['product'],'class' => "submodal")
-                               );
+																																											$this->Html->image($imageURL, array('fullBase' => true,'width' => '100px','height' => '100px')),
+																																											$largeimageURL,
+																																											array('escapeTitle' => false, 'title' => $product['product']['product'],'class' => "group{$key}")
+																																										);
                 ?>
             </td>
-            <td><?php $totalquantity = $product['quantity'];
-						$options = array();
-						for($i= 0; $i <= $totalquantity; $i++){
-							$options[$i] = $i;
-						}
+            <td><?php
+														$totalquantity = $product['quantity'];
+														$options = array();
+														for($i= 0; $i <= $totalquantity; $i++){
+															$options[$i] = $i;
+														}
 						
-						echo $this->Form->input("selected_qty_{$row_id}", array('options' => $options,
+														echo $this->Form->input("selected_qty_{$row_id}", array('options' => $options,
 																	 'default' => $totalquantity,
 																	 'label' => false,
 																	 'name' => "selectedQty",
 																	 'id' => "quantity_number_{$row_id}"
 																	 ));
-					?>
-					
-					<?php
 			
-			?></td>
+												?></td>
             <td><?php echo $currency.$product['sale_price'];
 			 ?></td>
 			<td>
@@ -248,4 +236,10 @@ $url = $this->Url->build(['controller' => 'stockTransfer', 'action' => 'order_qt
 			});
         }
     }
+</script>
+<?php echo '<script type="text/javascript" src="https://'.ADMIN_DOMAIN.'/js/jquery.colorbox.js"></script>';?>
+<script>
+		$(document).ready(function(){
+		<?php echo $groupStr;?>
+		});
 </script>

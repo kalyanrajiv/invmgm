@@ -1,16 +1,14 @@
 <?php
-use Cake\Core\Configure;
-use Cake\Core\Configure\Engine\PhpConfig;	
+	use Cake\Core\Configure;
+	use Cake\Core\Configure\Engine\PhpConfig;	
 	$currency = Configure::read('CURRENCY_TYPE');
+	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
 	//$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
-?>
-<?php if(!empty($this->request->query['search_kw'])){
+	$kiosk_id = $value = '';
+	if(!empty($this->request->query['search_kw'])){
 		$value = $this->request->query['search_kw'];
-	}else{
-		$value = '';
-	}
-	//pr($products);
-	$kiosk_id='';
+	}//pr($products);
+	
 	if(empty($kiosk_id)){
 		if(array_key_exists(0,$this->request->params['pass'])){
 			$kiosk_id = $this->request->params['pass'][0];
@@ -20,9 +18,8 @@ use Cake\Core\Configure\Engine\PhpConfig;
 		if(!array_key_exists('display_type',$this->request->query)){
 			$displayType = "more_than_zero";
 		}
-	}
-	//pr($this->request);
-	?>
+	}	//pr($this->request);
+?>
     <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
@@ -166,7 +163,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 		$groupStr = "";
 			foreach($products as $key => $product){
 				$groupStr.="\n$(\".group{$key}\").colorbox({rel:'group{$key}'});";
-			$truncatedProduct =  \Cake\Utility\Text::truncate(
+				$truncatedProduct =  \Cake\Utility\Text::truncate(
                                                                         $product->product,
                                                                         30,
                                                                         [
@@ -175,11 +172,11 @@ use Cake\Core\Configure\Engine\PhpConfig;
                                                                         ]
                                                                 );
 			
-			$imageDir = WWW_ROOT.DS."files".DS.'Products'.DS.'image'.DS.$product->id.DS;
-			$imageName = $product->image;
-			$absoluteImagePath = $imageDir.$imageName;
-			$imageURL = "/files/Products/image/".$product->id."/$imageName";
-			$LargeimageURL = "/files/Products/image/".$product->id."/vga_"."$imageName";
+				$imageDir = WWW_ROOT.DS."files".DS.'Products'.DS.'image'.DS.$product->id.DS;
+				$imageName = $product->image;
+				$absoluteImagePath = $imageDir.$imageName;
+				$imageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/thumb_".$imageName;
+				$largeImageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/vga_"."$imageName";
 		?>
 		<tr>
 			<td>
@@ -227,7 +224,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 				<?php
 					echo $this->Html->link(
 					$this->Html->image($imageURL, array('fullBase' => true,'width' => '100px','height' => '100px')),
-					$LargeimageURL,
+					$largeImageURL,
 					array('escapeTitle' => false, 'title' => $product->product,'class' => "group{$key}")
 				);
 				?>

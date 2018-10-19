@@ -1,16 +1,21 @@
 <?php
+		use Cake\Core\Configure;
+		use Cake\Core\Configure\Engine\PhpConfig;
+		$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+	?>
+<?php
 $jQueryURL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
 if(defined('URL_SCHEME')){
 	$jQueryURL = URL_SCHEME."ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
 }
 ?>
 <script type="text/javascript" src="<?php echo $jQueryURL;?>"></script>
-<?php echo $this->Html->script('jquery.printElement');
-echo $this->Html->css('model/style.css');
-echo $this->Html->css('model/submodal.css');
- echo $this->Html->script('model/submodalsource.js');
- echo $this->Html->script('model/submodal.js');
-
+<?php
+		echo $this->Html->script('jquery.printElement');
+		echo $this->Html->css('model/style.css');
+		echo $this->Html->css('model/submodal.css');
+		echo $this->Html->script('model/submodalsource.js');
+		echo $this->Html->script('model/submodal.js');
 ?>
 <input type='button' id='printSelected' name='print' value='Print Receipt' style='width:200px;' align='center' />
 <?= $this->Html->link('Stock Below Level', array('action' => 'stock_level'));?>
@@ -56,9 +61,11 @@ echo $this->Html->css('model/submodal.css');
 			<tbody>
 				<?php $currentPageNumber = $this->Paginator->current();?>
 				<?php //pr($product);
+				$groupStr = "";
 				foreach ($product as $key => $productData):
-				if($productData){
-				$truncatedProduct = \Cake\Utility\Text::truncate(
+					$groupStr.="\n$(\".group1{$key}\").colorbox({rel:'group{$key}'});";
+					if($productData){
+						$truncatedProduct = \Cake\Utility\Text::truncate(
                                                                 $productData['product'],
                                                                 50,
                                                                 [
@@ -105,24 +112,32 @@ echo $this->Html->css('model/submodal.css');
 					<td>
 			<?php
 			if($productData){
-				$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$productData['id'].DS;
-				$imageName =  $productData['image'];
-				$absoluteImagePath = $imageDir.$imageName;
-				$imageURL = "/thumb_no-image.png";
-                //echo $absoluteImagePath;die;
-				if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-					//$applicationURL = $this->html->url('/', true);
-					//$imageURL = $applicationURL."files/product/image/".$product['Product']['id']."/thumb_$imageName";
-					$imageURL = "/files/Products/image/".$productData['id']."/$imageName";
-				}
-			
-					echo $this->Html->link(
-							  $this->Html->image($imageURL, array('fullBase' => true, 'style' => 'width: 40px; height: 40px;')),
-							  $imageURL,
-							  array('escapeTitle' => false, 'title' => $productData['product'],'class' => "submodal")
-							 );}else{
+						$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$productData['id'].DS;
+						$imageName =  "thumb_".$productData['image'];
+						$largeImageName = 'vga_'.$productData['image'];
+						$absoluteImagePath = $imageDir.$imageName;
+						$imageURL = "/thumb_no-image.png"; //echo $absoluteImagePath;die;
+						$largeImageURL = $imageURL;
+						
+						if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
+								$imageURL = "$siteBaseURL/files/Products/image/".$productData['id']."/$imageName";
+								$largeImageURL = "$siteBaseURL/files/Products/image/".$productData['id']."/$largeImageName"; //rasu
+						}
+						
+						echo  $this->Html->link(
+																																		$this->Html->image($imageURL, array(
+																																																																						'fullBase' => true,
+																																																																						'escapeTitle' => false,
+																																																																						'title' => $productData['product'],
+																																																																						'style' => 'width:40px;height:40px;'
+																																																																						)
+																																																				),
+																																		$largeImageURL,
+																																		array('escapeTitle' => false, 'title' => $productData['product'],'class' => "group1{$key}") //group1{$key}
+                            );
+			}else{
 						echo "<strong>--</strong>";
-					}
+			}
 
 ?>&nbsp;</td>
 					<td><?php if($productData){echo $productData['color'];}else{ echo "<strong>--</strong>";}?></td>
@@ -150,3 +165,9 @@ echo $this->Html->css('model/submodal.css');
 			</tbody>
 		</table>
 </div>
+<?php echo '<script type="text/javascript" src="https://'.ADMIN_DOMAIN.'/js/jquery.colorbox.js"></script>';?>
+<script>
+		$(document).ready(function(){
+		<?php echo $groupStr;?>
+		});
+</script>
