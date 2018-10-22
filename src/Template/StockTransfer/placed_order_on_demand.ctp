@@ -35,7 +35,7 @@ if(defined('URL_SCHEME')){
 		<input type='button' id='printSelected' name='print' value='Print Receipt' style='width:200px;' align='center' />	
 	<?php }
 	?>
-    <h4 style="background-color: yellow;width: 522px;font-size: 16px;height: 29px;font-weight: bold;">(Print function would be available only for locked orders)</h4>
+    <h4 style="background-color: yellow;width: 522px;font-size: 16px;height: 29px;font-weight: bold;">(Print function would be available only for locked orders..)</h4>
     <?php echo $this->Html->link(__(' Kiosk Placed Order'), array('controller' => 'kiosk_orders', 'action' => 'placed_orders'));?>
 	
 	<input type = "button" onclick="JavaScript: showHiddenElements();" value = "Reset" style=<?=$style;?>>
@@ -150,8 +150,8 @@ if(defined('URL_SCHEME')){
 		$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$product['id'].DS;
 		$imageName = $product['image'];
 		$absoluteImagePath = $imageDir.$imageName;
-		$imageURL = "/thumb_no-image.png";
-		if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
+		$largeimageURL = $imageURL = "/thumb_no-image.png";
+		if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
 			$imageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/thumb_".$imageName;
 			$largeimageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/vga_"."$imageName"; //rasu
 		}
@@ -208,7 +208,10 @@ if(defined('URL_SCHEME')){
 		<td style="width: 56px;">
 			<?php echo $product["color"];?>
 		</td>
-		<?php if($forprint == "Yes"){?>
+		<?php
+			$largeimageURL = !isset($largeimageURL) ? "/thumb_no-image.png" : $largeimageURL;
+			if($forprint == "Yes"){
+				?>
 		<td><?php
 			echo $this->Html->link(
 							$this->Html->image($imageURL, array('fullBase' => true,'height'=>'64px','width'=>'64px')),
@@ -416,7 +419,7 @@ if(defined('URL_SCHEME')){
 				$absoluteImagePath = $imageDir.$imageName;
 				$imageURL = "/thumb_no-image.png";
 				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-					$imageURL = "/files/Products/image/".$cancelProduct['id']."/$imageName";
+					$imageURL = "{$siteBaseURL}/files/Products/image/".$cancelProduct['id'].DS."/thumb_".$imageName;
 				}
 				?>
 				<tr style="color: red;">

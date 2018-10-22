@@ -302,7 +302,7 @@
 		$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$product['id'].DS;
 		$imageName = $product['image'];
 		$absoluteImagePath = $imageDir.$imageName;
-		$LargeimageURL = $imageURL = "/thumb_no-image.png";
+		$largeImageURL = $imageURL = "/thumb_no-image.png";
 		if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
 			$imageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/thumb_".$imageName;
 			$largeImageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/vga_".$imageName;

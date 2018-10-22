@@ -84,7 +84,7 @@ use Cake\Utility\Text;
         $imageURL = "/thumb_no-image.png";
         
         if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-            $imageURL = $siteBaseURL."/files/Products/image/".$product->id."/$imageName";
+            $imageURL = $siteBaseURL."/files/Products/image/".$product->id.DS."thumb_".$imageName;
         }
         
         $productQuantity = null;
