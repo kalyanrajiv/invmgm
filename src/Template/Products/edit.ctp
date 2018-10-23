@@ -1,4 +1,5 @@
 <?php
+//pr($this->request['data']);die;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
 ?>
@@ -78,11 +79,48 @@ echo $this->Form->create($product,array('enctype' => 'multipart/form-data')); ?>
 			</table>";
 			$url = $this->Url->build(array('action'=>'get-product-models'));
 		echo $this->Form->input('brand_id',array('id' => 'ProductBrandId','name' => 'Product[brand_id]','rel'=>$url));
-		
 		echo $this->Form->input('model_id',array('id'=>'ProductModelId',
 												 'name'=>'Product[model_id]',
 												 'options' => $mobileModels,
 												 ));
+		$additionalUrl = $this->Url->build(array('action'=>'get-product-additional-models'));
+		echo $this->Form->input('additional_model', array('type' => 'hidden', 'id' => 'additional_model_id','rel'=>$additionalUrl));
+		if(count($mobileModels) >= 1 && !array_key_exists('-1',$mobileModels)){
+			$chunks = array_chunk($mobileModels,8,true);
+			if(count($chunks)){
+				$colmnStr = "";
+				foreach($chunks as $c => $chunk){
+					$colmnStr.="<tr>";
+					foreach($chunk as $ch => $condition){
+						if(!empty($this->request['data']) && array_key_exists('additional_model_id',$this->request['data'])){
+							$existingModels = explode(',',$this->request['data']['additional_model_id']);
+							if(in_array($ch,$existingModels)){
+								$checked = "checked";
+							}else{
+								$checked = '';
+							}
+						}else{
+							$checked = '';
+						}
+						$colmnStr.="<td>".$this->Form->input($condition, array('type' => 'checkbox',
+						  'name'=>'Product[additional_model_id][]',
+						  'label' => array('style' => "color: blue;"),
+						  'value' => $ch,
+						  'hiddenField' => false,
+						  'checked' => $checked
+						  ))."</td>";
+					}
+					$colmnStr.="</tr>";        
+				}
+				echo $tblHTML = <<<TBL_HMTL
+					<table id = 'additional_model'>
+						<tr><td colspan='8'><h4>Additional Model</h4><hr/></td></tr>
+						$colmnStr
+						</tr>
+					</table>
+TBL_HMTL;
+			}
+		}
 		
 		echo $this->Form->input('manufacturing_date',array('name' => 'Product[manufacturing_date]'));
 		//echo $this->Form->input('sku');
@@ -372,6 +410,7 @@ $res = array_keys($discountOptions);
 	$('#ProductBrandId').change(function(){
 		var id = $(this).val();
 		var targetUrl = $(this).attr('rel') + '?id=' + id;
+		var additionalModelUrl = $(this).attr('rel') + '?id=' + id + '&model=additional';
 		$.blockUI({ message: 'Just a moment...' });
 		$.ajaxSetup({
 		url: targetUrl,
@@ -379,6 +418,17 @@ $res = array_keys($discountOptions);
 				$.unblockUI();
 			$('#ProductModelId').empty();
 			$('#ProductModelId').append(result);
+			//$('#existing_additional_model').empty();
+			}
+		});
+		$.ajax();
+		$.ajaxSetup({
+		url: additionalModelUrl,
+			success: function(response){
+			console.log(response);
+			//$('#existing_additional_model').empty();
+			$('#additional_model').empty();
+			$('#additional_model_id').after(response);
 			}
 		});
 		$.ajax();

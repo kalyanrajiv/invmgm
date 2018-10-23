@@ -842,6 +842,9 @@ class ProductsController extends AppController
 		$editErrors = array();
 		if ($this->request->is(array('post', 'put'))) {
          //    pr($this->request->data);die;
+            if(array_key_exists('additional_model_id',$this->request->data['Product']) && !empty($this->request->data['Product']['additional_model_id'])){
+			   $this->request->data['Product']['additional_model_id'] = implode(',',$this->request->data['Product']['additional_model_id']);
+            }
 		  if(array_key_exists('discount_status',$this->request->data)){
 			   $this->request->data['Product']['discount_status'] = $this->request->data['discount_status'];
 			   unset($this->request->data['discount_status']);
@@ -4244,7 +4247,8 @@ class ProductsController extends AppController
 	}
 	
 	public function getProductModels(){
-	 
+        $additionalModel = 0;
+        if(array_key_exists('model',$this->request->query)){$additionalModel = 1;}
 		$brandId = $this->request->query('id');
 		//$this->request->onlyAllow('ajax');
 		$mobileModels_query = $this->ProductModels->find('list',array(
@@ -4266,7 +4270,7 @@ class ProductsController extends AppController
 		  $mobileModels = array();
 		}
 		$this->set(compact('mobileModels')); // Pass $data to the view
-		//$this->layout = false;
+		if($additionalModel == 1){$this->render('get_product_additional_models');}
 	}
     
     function deleteImage(){
