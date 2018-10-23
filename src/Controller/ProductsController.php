@@ -434,6 +434,7 @@ class ProductsController extends AppController
 			   }else{
 					$Users = array();
 			   }
+               //pr($Users);
 			   $this->set(compact('Users'));
 		  if($this->request->session()->read('Auth.User.group_id') == KIOSK_USERS){
 			   $this->render('view_kiosk');
@@ -810,8 +811,9 @@ class ProductsController extends AppController
 	}
      
     public function edit($id = null) {
-	 $sites = Configure::read('sites');
-	 $path = dirname(__FILE__);
+        //$this->request->Session()->read('Auth.User.id');die;
+        $sites = Configure::read('sites');
+        $path = dirname(__FILE__);
 		$isboloRam = strpos($path, ADMIN_DOMAIN);
 		if($isboloRam == false){
             $this->Flash->error(__("This function works only on ". ADMIN_DOMAIN));
@@ -988,9 +990,9 @@ class ProductsController extends AppController
 							//	//echo "kiosk_{$kioskId}_products";
                             //pr($data['Product']);die;
 							  $productEntity = $productTable->get($data['Product']['id']);
-                              
+                              $data['Product']['modified_by'] = $this->request->Session()->read('Auth.User.id');
 							  $productEntity = $productTable->patchEntity($productEntity,$data['Product']);
-							//  pr($productEntity);die;
+                                //pr($data['Product']);pr($productEntity);die;
 							  if(empty($productEntity->errors())){
                                  //echo "jjds";die;
 								$productTable->save($productEntity);
@@ -4317,7 +4319,7 @@ class ProductsController extends AppController
                         $kiosks_data = $stmt ->fetchAll('assoc');
 					}
                     //---------------------
-					$directory = '/var/www/vhosts/hpwaheguru.co.uk/httpdocs/webroot/files/Products/image/'.$productId;
+					$directory = WWW_ROOT.'files/Products/image/'.$productId;
 					if(file_exists($directory)){
 						 $dir_name = scandir($directory);
 						 if(!empty($dir_name)){

@@ -4,6 +4,7 @@
     use Cake\Core\Configure\Engine\PhpConfig;
 	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
     $currency = Configure::read('CURRENCY_TYPE');
+    //pr($Users);
 	//pr($product);
 ?>
 <style>dt{width: 200px;}dd{padding-left: 20px;}</style>
@@ -220,10 +221,10 @@
 			if(array_key_exists($product['modified_by'],$Users)){
 				echo $Users[$product['modified_by']];	
 			}else{
-				echo "--";
+				echo "--".$product['modified_by']."--";
 			}
 			 ?>
-			&nbsp;&nbsp;&nbsp;&nbsp;**Modified by is applicable only for hpwaheguru
+			&nbsp;&nbsp;&nbsp;&nbsp;**Modified by is applicable only for hifiprofile
 		</dd>
 		<?php 
 		}else{ ?>
@@ -233,10 +234,10 @@
 			if(array_key_exists($product['modified_by'],$Users)){
 				echo $Users[$product['modified_by']];	
 			}else{
-				echo "--";
+				echo "--".$product['modified_by']."--";
 			}
 			 ?>
-			&nbsp;&nbsp;&nbsp;&nbsp;**Modified by is applicable only for hpwaheguru
+			&nbsp;&nbsp;&nbsp;&nbsp;**Modified by is applicable only for hifiprofile
 		</dd>
 		<?php }
 		?>
