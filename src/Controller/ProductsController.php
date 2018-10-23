@@ -650,7 +650,8 @@ class ProductsController extends AppController
 			
 		}
 		$categories_query = $this->Products->Categories->find('all',array('fields' => array('id', 'category','id_name_path'),
-                                                                       'conditions' => array('Categories.status' => 1)));
+                                                                       'conditions' => array('Categories.status' => 1),
+                                                                       'order'=>'category asc'));
 		$categories_query = $categories_query->hydrate(false);
 		if(!empty($categories_query)){
 			   $categories = $categories_query->toArray(); 
@@ -666,6 +667,7 @@ class ProductsController extends AppController
 																 'keyField' => 'id',
 																 'valueField' => 'brand',
 																 'conditions' => ['Brands.status' => 1],
+                                                                 'order'=>'brand asc',
 															]);
 		$brands_query = $brands_query->hydrate(false);
 		if(!empty($brands_query)){
@@ -1121,7 +1123,8 @@ class ProductsController extends AppController
 		//$categories = $this->Product->Category->find('list',array('fields' => array('id', 'category'),
 		//							   'conditions' => array('Category.status' => 1)));
 		$categories_query = $this->Products->Categories->find('all',array('fields' => array('id', 'category','id_name_path'),
-                                                                       'conditions' => array('Categories.status' => 1)));
+                                                                       'conditions' => array('Categories.status' => 1),
+                                                                       'order'=>'category asc'));
         $categories_query = $categories_query->hydrate(false);
         if(!empty($categories_query)){
             $categories = $categories_query->toArray();
@@ -1132,7 +1135,8 @@ class ProductsController extends AppController
 		$brands_query = $this->Products->Brands->find('list',[
                                                             'keyField' => 'id',
                                                             'valueField' => 'brand',
-                                                            'conditions' => ['Brands.status' => 1]
+                                                            'conditions' => ['Brands.status' => 1],
+                                                            'order'=>'brand asc'
                                                        ]
                                                 );
         $brands_query = $brands_query->hydrate(false);
@@ -3010,7 +3014,8 @@ class ProductsController extends AppController
 												[
 													'keyField' =>'id',
 													'valueField' => 'brand',
-                                                     'conditions' => ['Brands.status' => 1]
+                                                     'conditions' => ['Brands.status' => 1],
+                                                     'order'=>'brand asc',
 												]
 										 );
 		//$brandName_query = $brandName_query->hydrate(false);

@@ -108,6 +108,7 @@ class ColorsController extends AppController{
                   $color_query = $this->Colors->find('all',[
                                                     'keyField' => 'id',
                                                      'valueField' => 'name',
+													 'order'=>'name asc',
                                                  ]
                                         ); 
            
@@ -206,10 +207,10 @@ class ColorsController extends AppController{
             //}
             $myfile = fopen($filename, "w") or die("Unable to open file!");
             $color_query = $this->Colors->find('all',[
-                                               'keyField' => 'id',
-                                                     'valueField' => 'name',
-                                                    
-                                                 ]
+													  'keyField' => 'id',
+													  'valueField' => 'name',
+													  'order'=>'name asc',
+													  ]
                                         ); 
             $color_query = $color_query->hydrate(false);
             if(!empty($color_query)){
@@ -280,11 +281,11 @@ class ColorsController extends AppController{
                //}
             $myfile = fopen($filename, "w") or die("Unable to open file!");
             $color_query = $this->Colors->find('all',[
-                                                    'keyField' => 'id',
-                                                     'valueField' => 'name',
-                                                    
-                                                 ]
-                                        ); 
+													  'keyField' => 'id',
+													  'valueField' => 'name',
+													  'order'=>'name asc',
+													  ]
+											 ); 
            
             $color_query = $color_query->hydrate(false);
             if(!empty($color_query)){

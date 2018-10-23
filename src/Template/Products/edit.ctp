@@ -83,15 +83,15 @@ echo $this->Form->create($product,array('enctype' => 'multipart/form-data')); ?>
 												 'name'=>'Product[model_id]',
 												 'options' => $mobileModels,
 												 ));
-		$additionalUrl = $this->Url->build(array('action'=>'get-product-additional-models'));
-		echo $this->Form->input('additional_model', array('type' => 'hidden', 'id' => 'additional_model_id','rel'=>$additionalUrl));
+		echo $this->Form->input('additional_model', array('type' => 'hidden', 'id' => 'additional_model_id'));
 		if(count($mobileModels) >= 1 && !array_key_exists('-1',$mobileModels)){
-			$chunks = array_chunk($mobileModels,8,true);
+			$chunks = array_chunk($mobileModels,6,true);
 			if(count($chunks)){
 				$colmnStr = "";
 				foreach($chunks as $c => $chunk){
 					$colmnStr.="<tr>";
 					foreach($chunk as $ch => $condition){
+						$modelName = strtolower($condition);
 						if(!empty($this->request['data']) && array_key_exists('additional_model_id',$this->request['data'])){
 							$existingModels = explode(',',$this->request['data']['additional_model_id']);
 							if(in_array($ch,$existingModels)){
@@ -102,7 +102,7 @@ echo $this->Form->create($product,array('enctype' => 'multipart/form-data')); ?>
 						}else{
 							$checked = '';
 						}
-						$colmnStr.="<td>".$this->Form->input($condition, array('type' => 'checkbox',
+						$colmnStr.="<td>".$this->Form->input($modelName, array('type' => 'checkbox',
 						  'name'=>'Product[additional_model_id][]',
 						  'label' => array('style' => "color: blue;"),
 						  'value' => $ch,

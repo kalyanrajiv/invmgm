@@ -80,7 +80,44 @@ echo $this->Form->create($productEntity,array('enctype' => 'multipart/form-data'
 												 'name'=>'model_id',
 												 'options' => $mobileModels,
 												 ));
-		
+		echo $this->Form->input('additional_model', array('type' => 'hidden', 'id' => 'additional_model_id'));
+		if(count($mobileModels) >= 1 && !array_key_exists('-1',$mobileModels)){
+			$chunks = array_chunk($mobileModels,6,true);
+			if(count($chunks)){
+				$colmnStr = "";
+				foreach($chunks as $c => $chunk){
+					$colmnStr.="<tr>";
+					foreach($chunk as $ch => $condition){
+						$modelName = strtolower($condition);
+						if(!empty($this->request['data']) && array_key_exists('additional_model_id',$this->request['data'])){
+							$existingModels = explode(',',$this->request['data']['additional_model_id']);
+							if(in_array($ch,$existingModels)){
+								$checked = "checked";
+							}else{
+								$checked = '';
+							}
+						}else{
+							$checked = '';
+						}
+						$colmnStr.="<td>".$this->Form->input($modelName, array('type' => 'checkbox',
+						  'name'=>'Product[additional_model_id][]',
+						  'label' => array('style' => "color: blue;"),
+						  'value' => $ch,
+						  'hiddenField' => false,
+						  'checked' => $checked
+						  ))."</td>";
+					}
+					$colmnStr.="</tr>";        
+				}
+				echo $tblHTML = <<<TBL_HMTL
+					<table id = 'additional_model'>
+						<tr><td colspan='8'><h4>Additional Model</h4><hr/></td></tr>
+						$colmnStr
+						</tr>
+					</table>
+TBL_HMTL;
+			}
+		}
 		echo $this->Form->input('manufacturing_date');
 		//echo $this->Form->input('sku');
 		echo $this->Form->input('country_make');
@@ -330,6 +367,7 @@ $res = array_keys($discountOptions);
 	$('#brand-id').change(function(){
 		var id = $(this).val();
 		var targetUrl = $(this).attr('rel') + '?id=' + id;
+		var additionalModelUrl = $(this).attr('rel') + '?id=' + id + '&model=additional';
 		$.blockUI({ message: 'Just a moment...' });
 		$.ajaxSetup({
 		url: targetUrl,
@@ -337,6 +375,16 @@ $res = array_keys($discountOptions);
 				$.unblockUI();
 			$('#model-id').empty();
 			$('#model-id').append(result);
+			}
+		});
+		$.ajax();
+		$.ajaxSetup({
+		url: additionalModelUrl,
+			success: function(response){
+			console.log(response);
+			//$('#existing_additional_model').empty();
+			$('#additional_model').empty();
+			$('#additional_model_id').after(response);
 			}
 		});
 		$.ajax();
