@@ -112,7 +112,7 @@
 		echo $this->Form->input('brand_id',array('empty' => '--choose brand--','id'=>'ProductBrandId','name'=>'Product[brand_id]','rel'=>$url));
 		
 		echo $this->Form->input('model_id',array('empty' => '--choose model--','id'=>'ProductModelId','name'=>'Product[model_id]'));
-		
+		echo $this->Form->input('additional_model', array('type' => 'hidden', 'id' => 'additional_model_id'));
 		echo $this->Form->input('manufacturing_date',array('id'=>'ProductManufacturingDateMonth','name'=>'Product[manufacturing_date]'));	
 		//echo $this->Form->input('sku');
 		echo $this->Form->input('country_make',array('id'=>'ProductCountryMake','name'=>'Product[country_make]'));
@@ -567,6 +567,7 @@ $('#remote .typeahead').typeahead(null, {
 	$('#ProductBrandId').change(function(){
 		var id = $(this).val();
 		var targetUrl = $(this).attr('rel') + '?id=' + id;
+		var additionalModelUrl = $(this).attr('rel') + '?id=' + id + '&model=additional';
 		$.blockUI({ message: 'Just a moment...' });
 		$.ajaxSetup({
 		url: targetUrl,
@@ -574,6 +575,16 @@ $('#remote .typeahead').typeahead(null, {
 				$.unblockUI();
 			$('#ProductModelId').empty();
 			$('#ProductModelId').append(result);
+			}
+		});
+		$.ajax();
+		$.ajaxSetup({
+		url: additionalModelUrl,
+			success: function(response){
+			console.log(response);
+			//$('#existing_additional_model').empty();
+			$('#additional_model').empty();
+			$('#additional_model_id').after(response);
 			}
 		});
 		$.ajax();

@@ -48,12 +48,13 @@
 	 </li>
 	 <?php
 		 $path = dirname(__FILE__);
-		 $isHpWaheguru = strpos($path,"hpwaheguru");
+		 $isHpWaheguru = strpos($path, ADMIN_DOMAIN);
 		 $ismbWaheguru = strpos($path,"mbwaheguru");
 		 if($isHpWaheguru){
 	 ?>
 	 <li class='has-sub'><a href='products/import-products-2-db' id='import'><span>Import</span></a>
 		 <ul>
+         <li><?php echo $this->Html->link(__("**Import Products**"), array('plugin' => null,'controller' => 'products', 'action' => 'import_products'));?></li>
 			<li><?php echo $this->Html->link(__('Import Products 2 DB'), array('plugin' => null,'controller' => 'products', 'action' => 'import_products_2_db'));?></li>
 			<li><?php echo $this->Html->link(__('WareHouse Products'), array('plugin' => null,'controller' => 'products', 'action' => 'import_products'));?></li>
 			<li><?php echo $this->Html->link(__('Kiosk Products'), array('plugin' => null,'controller' => 'products', 'action' => 'import_kiosk_products'));?></li>

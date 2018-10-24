@@ -4,7 +4,6 @@
     use Cake\Core\Configure\Engine\PhpConfig;
 	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
     $currency = Configure::read('CURRENCY_TYPE');
-    //pr($Users);
 	//pr($product);
 ?>
 <style>dt{width: 200px;}dd{padding-left: 20px;}</style>
@@ -79,6 +78,11 @@
 		<dt><?php echo __('Model'); ?></dt>
 		<dd>
 			<?php echo $product['model']; ?>
+			&nbsp;
+		</dd>
+		<dt><?php echo __('Additional Models'); ?></dt>
+		<dd>
+			<?php echo $product['additional_model']; ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Manufacturing Date'); ?></dt>
@@ -221,10 +225,10 @@
 			if(array_key_exists($product['modified_by'],$Users)){
 				echo $Users[$product['modified_by']];	
 			}else{
-				echo "--".$product['modified_by']."--";
+				echo "--";
 			}
 			 ?>
-			&nbsp;&nbsp;&nbsp;&nbsp;**Modified by is applicable only for hifiprofile
+			&nbsp;&nbsp;&nbsp;&nbsp;**Modified by is applicable only for hpwaheguru
 		</dd>
 		<?php 
 		}else{ ?>
@@ -234,10 +238,10 @@
 			if(array_key_exists($product['modified_by'],$Users)){
 				echo $Users[$product['modified_by']];	
 			}else{
-				echo "--".$product['modified_by']."--";
+				echo "--";
 			}
 			 ?>
-			&nbsp;&nbsp;&nbsp;&nbsp;**Modified by is applicable only for hifiprofile
+			&nbsp;&nbsp;&nbsp;&nbsp;**Modified by is applicable only for hpwaheguru
 		</dd>
 		<?php }
 		?>

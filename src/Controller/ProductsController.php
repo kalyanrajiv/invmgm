@@ -405,6 +405,31 @@ class ProductsController extends AppController
 			   }else{
 					 $product = array();
 			   }
+               if(array_key_exists('additional_model_id',$product) && !empty($product['additional_model_id'])){
+					$additionalModelIds = explode(',',$product['additional_model_id']);
+					//foreach($additionalModelIds as $key => $addModelId){
+						 $mobileModels_query = $this->ProductModels->find('list',array(
+																						  'keyField' =>'id',
+																						  'valueField' => 'model',
+																						  'order'=>'model asc',
+																						 'conditions'=>array(
+																						  'id IN'=>$additionalModelIds,
+																						  )
+																						 )
+																					);
+						 $mobileModels_query = $mobileModels_query->hydrate(false);
+						 if(!empty($mobileModels_query)){
+							  $mobileModels = $mobileModels_query->toArray();
+							  $product['additional_model'] = implode(' , ',$mobileModels);
+						 }else{
+							  $mobileModels = array();
+							  $product['additional_model'] = '';
+						 }
+						 //pr($mobileModels);die;
+					//}
+			   }else{
+					$product['additional_model'] = '';
+			   }
 			   $product_code = $product['product_code'];
 			   
 			   $barcode = $this->Barcode->generate_bar_code($product_code,"png"); // html,png,svg,jpg
