@@ -56,10 +56,10 @@ use Cake\Core\Configure\Engine\PhpConfig;
 				<table style="margin-top: -13px;margin-bottom: -18px;">
 					<tr>
 						<td>
-							<input type = "text" name = "from_date" id = "datepicker_1" placeholder = "From date" style = "width:100px" value="<?php echo $from_date; ?>"/>
+							<input type = "text" name = "from_date" id = "datepicker_1" placeholder = "From date" readonly='readonly' autocomplete="false" style = "width:100px" value="<?php echo $from_date; ?>"/>
 						</td>
 						<td>
-							<input type = "text" name = "to_date" id = "datepicker_2" placeholder = "To date" style = "width:100px" value="<?php echo $to_date; ?>"/>
+							<input type = "text" name = "to_date" id = "datepicker_2" placeholder = "To date" readonly='readonly' autocomplete="false" style = "width:100px" value="<?php echo $to_date; ?>"/>
 						</td>
 						<td style='position: relative;right: -45px;'>
 							Select Kiosk:

@@ -546,6 +546,8 @@ $('#remote .typeahead').typeahead(null, {
 	  <?php
 	  foreach($centralStocks as $s_key => $s_val){ ?>
 		$('#checked_qtt_'+<?php echo $s_key?>).change(function() {
+			var product_id = $(this).val();
+			var product_name = ($("td #tooltip_"+product_id).attr('title'));
 		   var old_msg = document.getElementById('flash_msg').innerHTML;
 		  if($(this).is(":checked")) { // if checked
 			var qty = $('#in_qty_'+<?php echo $s_key?>).val();
@@ -612,12 +614,17 @@ $('#remote .typeahead').typeahead(null, {
 			  success: function(response) {
 				var objArr = $.parseJSON(response);
 				document.getElementById('flash_msg').innerHTML  = "";
+				$.unblockUI();
 				//alert(objArr.basket);
 				if (objArr.hasOwnProperty('basket')) {
 					document.getElementById('flash_msg').innerHTML  = objArr.basket;
 					$('#in_qty_'+<?php echo $s_key?>).attr("disabled", "disabled");
-					$('#search_kw').focus();
+					//$('#search_kw').focus();
 					$('#error_div').html("");
+					$.blockUI({ css:{fontSize:'20px'}, message: product_name+' is successfully added to your cart' });
+					setTimeout(function(){
+						$.unblockUI();
+					}, 1200);
 				}else if (objArr.hasOwnProperty('error')) {
                     document.getElementById('flash_msg').innerHTML  = old_msg;
 					document.getElementById('more_qty').innerHTML  = objArr.error;
@@ -628,7 +635,7 @@ $('#remote .typeahead').typeahead(null, {
 					//alert(org_qty);
 					$('#Qty_'+<?php echo $s_key?>).val(org_qty);
 					$('#remarks_'+<?php echo $s_key?>).val("");
-					$('#search_kw').focus();
+					//$('#search_kw').focus();
 					$( "#more_qty" ).dialog({
 						  resizable: false,
 						  height:140,
@@ -648,12 +655,12 @@ $('#remote .typeahead').typeahead(null, {
 					//$('#flash_msg').append(objArr.error);
 					//document.getElementById('flash_msg').innerHTML  = objArr.error;
                 }
-				  $.unblockUI();
+				  //$.unblockUI();
 			  },
 			  error: function(e) {
 				  $.unblockUI();
 				  //alert("An error occurred: " + e.responseText.message);
-				  $('#search_kw').focus();
+				  //$('#search_kw').focus();
 				  var msg = "An error occurred: " + e.responseText.message;
 				  document.getElementById('error_for_alert').innerHTML = msg;
 				 //alert("An error occurred: " + e.responseText.message);
@@ -702,16 +709,20 @@ $('#remote .typeahead').typeahead(null, {
 			   success: function(response) {
 				var objArr = $.parseJSON(response);
 				//alert(objArr.basket);
-				$('#search_kw').focus();
+				//$('#search_kw').focus();
 				document.getElementById('flash_msg').innerHTML  = ""
 				document.getElementById('flash_msg').innerHTML  = objArr.basket;
-				  $('#in_qty_'+<?php echo $s_key?>).removeAttr("disabled");
-				  $('#error_div').html("");
-				  $.unblockUI();
+				$('#in_qty_'+<?php echo $s_key?>).removeAttr("disabled");
+				$('#error_div').html("");
+				$.unblockUI();
+				$.blockUI({ css:{fontSize:'20px'}, message: product_name+' is successfully removed from your cart' });
+				setTimeout(function(){
+					$.unblockUI();
+				}, 1200);
 			   },
 			   error: function(e) {
 				  $.unblockUI();
-				  $('#search_kw').focus();
+				  //$('#search_kw').focus();
 				  //alert("An error occurred: " + e.responseText.message);
 				  var msg = "An error occurred: " + e.responseText.message;
 				  document.getElementById('error_for_alert').innerHTML = msg;

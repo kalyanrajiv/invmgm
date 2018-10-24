@@ -3628,7 +3628,7 @@ class StockTransferController extends AppController{
 						if($total_data == $counter){
 							$paymentData = array(
 												 'product_receipt_id' => $recitID,
-												 'payment_method' => 'Bank Transfer',
+												 'payment_method' => 'On Credit',
 												 'description' => 'stock invoice',
 												 'amount' => $finalAmt,
 												 'payment_status' => 1,
