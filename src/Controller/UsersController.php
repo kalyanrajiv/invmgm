@@ -1426,7 +1426,7 @@ class UsersController extends AppController
 							 $Email->transport(TRANSPORT);
 							  $Email->from([$send_by_email => $emailSender]);
 							//$Email->sender("sales@oceanstead.co.uk");
-							$Email->subject('Reset http://fax.re-mailapp.com Password');
+							$Email->subject('Reset '.ADMIN_DOMAIN.' Password');
 							//$Email->send();	
 							if($Email->send()){
 								//$this->set('smtp_errors', $this->Email->smtpError);

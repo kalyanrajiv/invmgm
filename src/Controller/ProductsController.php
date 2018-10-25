@@ -2370,9 +2370,9 @@ class ProductsController extends AppController
                                     }
 									if(count($result1) > 0){
 										//Saving product for ADMIN_DOMAIN kiosk if existing
-										$g_id = $productsTable->get($finalProducts["Product"]["id"]);
-                                        $EntityPatch = $productsTable->patchEntity($g_id,$finalProducts["Product"],['validates' => false]);
-										$productsTable->save($EntityPatch);//update
+										$g_id = $ProductTable->get($finalProducts["Product"]["id"]);
+                                        $EntityPatch = $ProductTable->patchEntity($g_id,$finalProducts["Product"],['validates' => false]);
+										$ProductTable->save($EntityPatch);//update
 									}
 								}
 								$saveCount++;
