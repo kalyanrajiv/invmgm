@@ -36,39 +36,40 @@ class UserAttendancesController extends AppController
 		   }else{
 			  $all_ids_str = "";
 		   }
-		if($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS){
-		   $this->paginate = array(
-			 'fields'=>array('id','username'),
-			 'order' => array('username' => 'asc'),
-			 'recursive' => -1
-			);
-		}else{
-		  if(!empty($all_ids_str)){
+		  if($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS){
 			   $this->paginate = array(
-					'conditions' => array('id IN' => $all_ids),
-			 'fields'=>array('id','username'),
-			 'order' => array('username' => 'asc'),
-			 'recursive' => -1
-			);	   
+				 'fields'=>array('id','username'),
+				 'order' => array('username' => 'asc'),
+				 'recursive' => -1
+				);
 		  }else{
-			   $this->paginate = array(
-			 'fields'=>array('id','username'),
-			 'order' => array('username' => 'asc'),
-			 'recursive' => -1
-			);
+			   if(!empty($all_ids_str)){
+					$this->paginate = array(
+						 'conditions' => array('id IN' => $all_ids),
+				  'fields'=>array('id','username'),
+				  'order' => array('username' => 'asc'),
+				  'recursive' => -1
+				 );	   
+			   }else{
+					$this->paginate = array(
+				  'fields'=>array('id','username'),
+				  'order' => array('username' => 'asc'),
+				  'recursive' => -1
+				 );
+			   }
 		  }
-		}
 		
-		if(SPECIAL_USER == 0){
-			if(!array_key_exists('conditions',$this->paginate)){
-				$this->paginate['conditions']['username NOT LIKE'] = 'dr5%';
-			}else{
-				$this->paginate['conditions']['OR']['username NOT LIKE'] = 'dr5%';
-			}
-			
-		}
+		  if(SPECIAL_USER == 0){
+			  // pr($this->paginate);
+			  if(!array_key_exists('conditions',$this->paginate)){
+				  $this->paginate['conditions']['username NOT LIKE'] = QUOT_USER_PREFIX."%";
+			  }else{
+				  $this->paginate['conditions']['OR']['username NOT LIKE'] = QUOT_USER_PREFIX."%";
+			  }
+			    
+		  }
 		
-		$users = $this->paginate($this->Users);
+		 $users = $this->paginate($this->Users);
 	    foreach($users as $user){
 					 $userArr[] = array(
 										 'id' => $user->id,
@@ -234,8 +235,16 @@ class UserAttendancesController extends AppController
 				 }   
 			}
 			
-             
-            $users = $this->paginate($this->Users);
+          if(SPECIAL_USER == 0){
+			  // pr($this->paginate);
+			  if(!array_key_exists('conditions',$this->paginate)){
+				  $this->paginate['conditions']['username NOT LIKE'] = QUOT_USER_PREFIX."%";
+			  }else{
+				  $this->paginate['conditions']['OR']['username NOT LIKE'] = "%".QUOT_USER_PREFIX."%";
+			  }
+			    
+		  }
+		  $users = $this->paginate($this->Users);
             foreach($users as $user){
                         $userArr[] = array(
                                             'id' => $user->id,
@@ -1199,7 +1208,7 @@ class UserAttendancesController extends AppController
 		  
 		$conditionArr = $this->generate_condition_array();
 		if(SPECIAL_USER == 0){
-			$conditionArr['username NOT LIKE'] = 'dr5%';
+			$conditionArr['username NOT LIKE'] = QUOT_USER_PREFIX."%";
 		}
 		if(array_key_exists('month',$this->request->query['month'])){
 			$month = $this->request->query['month']['month'];
@@ -1223,7 +1232,7 @@ class UserAttendancesController extends AppController
 			if(SPECIAL_USER == 0){
 				$users_query = $this->Users->find('all',array(
 												'fields'=>array('id','username'),
-												'conditions' => array('username NOT LIKE' => 'dr5%')
+												'conditions' => array('username NOT LIKE' => QUOT_USER_PREFIX."%")
 												));
 				
 			}else{
@@ -1238,7 +1247,7 @@ class UserAttendancesController extends AppController
 					if(SPECIAL_USER == 0){
 						$users_query = $this->Users->find('all',array(
 															'conditions' => ['id IN' =>  $all_ids,
-																		  'username NOT LIKE' => 'dr5%'],
+																		  'username NOT LIKE' => QUOT_USER_PREFIX."%"],
 															 'fields'=>array('id','username')
 															 ));
 					}else{
@@ -1251,7 +1260,7 @@ class UserAttendancesController extends AppController
 					if(SPECIAL_USER == 0){
 						$users_query = $this->Users->find('all',array(
 															 'fields'=>array('id','username'),
-															 'conditions' => array('username NOT LIKE'=> 'dr5%')
+															 'conditions' => array('username NOT LIKE'=> QUOT_USER_PREFIX."%")
 															 ));
 					}else{
 						$users_query = $this->Users->find('all',array(
@@ -1462,115 +1471,168 @@ class UserAttendancesController extends AppController
          $this->set(compact('UserAttendances'));
 		$this->set(compact('kiosks', 'users'));
 	}
-    public function lastmonthsearch(){
-       
-		$conditionArr = $this->generate_condition_array();
-		if(array_key_exists('month',$this->request->query['month'])){
-			$month = $this->request->query['month']['month'];
-		}
-		//if(empty($month)){
-		//	$month = date("Y-n", strtotime("first day of previous month"));
-		//}
-        $username_query = $this->Users->find('list',[
+	 public function lastmonthsearch(){
+		  $id = $this->request->session()->read('Auth.User.id');
+		  $all_ids = $this->getChildren($id);
+		  if(!empty($all_ids)){
+			 $all_ids_str = implode(",",$all_ids);
+		  }else{
+			 $all_ids_str = "";
+		  }
+       	  $conditionArr = $this->generate_condition_array();
+		  if(SPECIAL_USER == 0){
+			
+			  $conditionArr['username NOT LIKE'] = QUOT_USER_PREFIX."%";
+		  }
+		  if(array_key_exists('month',$this->request->query['month'])){
+			  $month = $this->request->query['month']['month'];
+		  }
+		  //if(empty($month)){
+		  //	$month = date("Y-n", strtotime("first day of previous month"));
+		  //}
+		  $username_query = $this->Users->find('list',[
                                                     'keyField' => 'id',
                                                      'valueField' => 'username' 
                                                     ]
                                         ); 
-         if(!empty($username_query)){
-             $username = $username_query->toArray();
-        }
-		 
-		$searchKW = $this->request->query['search_kw'];
-		$userId = '';
-		$userIDs = array();
-        $userArr = array();
-		if(empty($searchKW)&& empty($month)){
-            $users_query = $this->Users->find('all',array(
-														'fields'=>array('id','username'),
-														//'recursive' => -1
-														));
-			// pr($users);
-			$users_query =  $users_query->hydrate(false);
-            if(!empty($users_query)){
-                $users = $users_query->toArray();
-            }else{
-                $users = array();
-            }
-           
-            foreach($users as $user){
-                $userArr[] = array(
-                            'id' => $user['id'],
-                            'username' => $user['username'],
-                            'hours' => $this->View_last_month_hours($user['id']),
-                            'Days' => $this->View_last_month_day($user['id'])
-                           );
-            }
-			 
-		}else{
-            
-			if(!empty($searchKW) && empty($month) ){
-                
-				$users_query = $this->Users->find('all',array(
+		  if(!empty($username_query)){
+			  $username = $username_query->toArray();
+		  }
+		  $searchKW = $this->request->query['search_kw'];
+		  $userId = '';
+		  $userIDs = array();
+		  $userArr = array();
+		  if(empty($searchKW)&& empty($month)){
+			   if($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS){
+					if(SPECIAL_USER == 0){
+						 $users_query = $this->Users->find('all',array(
+												'fields'=>array('id','username'),
+												'conditions' => array('username NOT LIKE' => QUOT_USER_PREFIX."%")
+												));
+					}else{
+						 $users_query = $this->Users->find('all',array(
+												'fields'=>array('id','username')
+												));	
+					}
+			   }else{
+					if(!empty($all_ids)){
+						 if(SPECIAL_USER == 0){
+							 $users_query = $this->Users->find('all',array(
+																 'conditions' => ['id IN' =>  $all_ids,
+																			   'username NOT LIKE' => QUOT_USER_PREFIX."%"],
+																  'fields'=>array('id','username')
+																  ));
+						 }else{
+							 $users_query = $this->Users->find('all',array(
+																 'conditions' => ['id IN' =>  $all_ids],
+																  'fields'=>array('id','username')
+																  ));
+						 }
+					}else{
+						 if(SPECIAL_USER == 0){
+							  $users_query = $this->Users->find('all',array(
+																   'fields'=>array('id','username'),
+																   'conditions' => array('username NOT LIKE'=> QUOT_USER_PREFIX."%")
+																   ));
+							  }else{
+								  $users_query = $this->Users->find('all',array(
+																	   'fields'=>array('id','username'),
+																	   'recursive' => -1
+																	   ));
+							  }
+					}	   
+				 
+			   }
+			   // pr($users);
+			   $users_query =  $users_query->hydrate(false);
+			   if(!empty($users_query)){
+				   $users = $users_query->toArray();
+			   }else{
+				   $users = array();
+			   }
+               foreach($users as $user){
+					$userArr[] = array(
+								'id' => $user['id'],
+								'username' => $user['username'],
+								'hours' => $this->View_last_month_hours($user['id']),
+								'Days' => $this->View_last_month_day($user['id'])
+							   );
+			   }
+		  }else{
+			   if(!empty($searchKW) && empty($month) ){
+                	$users_query = $this->Users->find('all',array(
 															'fields'=>array('id','username'),
 															 'conditions' => $conditionArr ,
 														//	'recursive' => -1
 															));
-                $users_query =  $users_query->hydrate(false);
-                if(!empty($users_query)){
-                    $users = $users_query->toArray();
-                }else{
-                    $users = array();
-                }
-               
-                foreach($users as $user){
-						$userArr[] = array(
-										'id' => $user['id'],
-										'username' => $user['username'],
-										'hours' => $this->View_last_month_hours($user['id']),
-										'Days' => $this->View_last_month_day($user['id'])
-									   );
-						
+					$users_query =  $users_query->hydrate(false);
+					if(!empty($users_query)){
+						$users = $users_query->toArray();
+					}else{
+						$users = array();
 					}
-					
-			}elseif(!empty($month) && !empty($searchKW)){
-				$users_query = $this->Users->find('all',array(
-															'fields'=>array('id','username'),
-															 'conditions' => $conditionArr ,
-															//'recursive' => -1
-															));
-                $users_query =  $users_query->hydrate(false);
-                if(!empty($users_query)){
-                    $users = $users_query->toArray();
-                }else{
-                    $users = array();
-                }
-                 if(!empty ($users)){
-                    foreach($users as $user){
-						$userArr[] = array(
-										'id' => $user['id'],
-										'username' => $user['username'],
-										'hours' => $this->View_last_month_hours_search($user['id'],$month),
-										'Days' => $this->View_last_month_day_search($user['id'],$month)
-									   );
-						
+               		foreach($users as $user){
+						 $userArr[] = array(
+										 'id' => $user['id'],
+										 'username' => $user['username'],
+										 'hours' => $this->View_last_month_hours($user['id']),
+										 'Days' => $this->View_last_month_day($user['id'])
+										);
+							
 					}
-                }
-				
-					//pr($userArr);
-			}
-			elseif(!empty($month) && empty($searchKW)){
-				$users_query = $this->Users->find('all',array(
+			   }elseif(!empty($month) && !empty($searchKW)){
+					$users_query = $this->Users->find('all',array(
+																'fields'=>array('id','username'),
+																 'conditions' => $conditionArr ,
+																//'recursive' => -1
+																));
+					$users_query =  $users_query->hydrate(false);
+					if(!empty($users_query)){
+						$users = $users_query->toArray();
+					}else{
+						$users = array();
+					}
+				   if(!empty ($users)){
+						foreach($users as $user){
+							 $userArr[] = array(
+												 'id' => $user['id'],
+												 'username' => $user['username'],
+												 'hours' => $this->View_last_month_hours_search($user['id'],$month),
+												 'Days' => $this->View_last_month_day_search($user['id'],$month)
+												 );
+							
+						}
+					}
+			   }elseif(!empty($month) && empty($searchKW)){
+					if($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS){
+						 $users_query = $this->Users->find('all',array(
 															'fields'=>array('id','username'),
 															// 'conditions' => $conditionArr ,
 														//	'recursive' => -1
 															));
-                $users_query =  $users_query->hydrate(false);
-                if(!empty($users_query)){
-                    $users = $users_query->toArray();
-                }else{
-                    $users = array();
-                }
-				foreach($users as $user){
+						 
+					}else{
+						 if(!empty($all_ids)){
+							  $users_query = $this->Users->find('all',array(
+																 'fields'=>array('id','username'),
+																 'conditions' => ['id IN' => $all_ids] ,
+																 'recursive' => -1
+																 ));	
+						 }else{
+							  $users_query = $this->Users->find('all',array(
+																 'fields'=>array('id','username'),
+																 // 'conditions' => $conditionArr ,
+																 'recursive' => -1
+																 ));
+						 }	
+					}
+				    $users_query =  $users_query->hydrate(false);
+					if(!empty($users_query)){
+						$users = $users_query->toArray();
+					}else{
+						$users = array();
+					}
+					foreach($users as $user){
 						$userArr[] = array(
 										'id' => $user['id'],
 										'username' => $user['username'],
@@ -1580,23 +1642,23 @@ class UserAttendancesController extends AppController
 						
 					}
 					//pr($userArr);
-			}
+			   }
 			
-		}
-        $usersname_query = $this->Users->find('list', array(
-													 'keyField' => 'id',
-													 'valueField' => 'username'
-													 ));
-        $usersname_query = $usersname_query->hydrate(false);
-        if(!empty($usersname_query)){
-              $usersname = $usersname_query->toArray();
-        }else{
-              $usersname = array();
-        }
+		  }
+		//  $usersname_query = $this->Users->find('list', array(
+		//											 'keyField' => 'id',
+		//											 'valueField' => 'username'
+		//											 ));
+		//  $usersname_query = $usersname_query->hydrate(false);
+		//  if(!empty($usersname_query)){
+		//		$usersname = $usersname_query->toArray();
+		//  }else{
+		//		$usersname = array();
+		//  }
 		
-		$this->set(compact('userArr','users','username'));
-		//$this->layout = 'default'; 
-		$this->render('viewlastmonth');
+		  $this->set(compact('userArr','users','username'));
+		  //$this->layout = 'default'; 
+		  $this->render('viewlastmonth');
 	}
     public function searchLastMonth($id = null,$mnth = null){
 		$userID = $id;
