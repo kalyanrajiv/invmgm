@@ -1310,24 +1310,73 @@ class UsersController extends AppController
         return $this->redirect($this->Auth->logout());
     }
     function search($keyword = ""){
-         $active = Configure::read('active');
-		$searchKW = $this->request->query['search_kw'];
-        $query = $this->Users->find()->where(['OR' => [
-                                                        'Users.username like' => "%$searchKW%",
-                                                        'Users.email like' => "%$searchKW%",
-                                                        'Users.f_name like' => "%$searchKW%",
-                                                                        ],
-                                              ]
-                                             );
-        //->contain()
-        $query->contain(['Groups']);
-        
-        $users =  $this->paginate($query);
-        //pr($users);die;
-		$this->set(compact('users','active'));
-        $this->viewBuilder()->templatePath('Users');
-		//$this->viewPath = 'Users';
-		$this->render('index');
+		  $active = Configure::read('active');
+		  $searchKW = trim(strtolower($this->request->query['search_kw']));
+		  $conditionArr = array();
+		  if(!empty($searchKW)){
+			   $conditionArr['OR']['Users.username like'] =  strtolower("%$searchKW%");
+			   $conditionArr['OR']['Users.email like'] =  strtolower("%$searchKW%");
+			   $conditionArr['OR']['Users.f_name like'] =  strtolower("%$searchKW%");
+		  }
+		  $loggedInUser =  $this->request->session()->read('Auth.User.username');
+		  if (!preg_match('/'.QUOT_USER_PREFIX.'/',$loggedInUser)){
+			   if($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS){
+					$this->paginate = [
+						 'conditions' => [
+							  $conditionArr,
+							  "username NOT LIKE" => "%".QUOT_USER_PREFIX."%",
+						 ],
+						'contain' => ['Groups'],
+						'order' => ['Users.level Asc'],
+					];
+					$users = $this->paginate($this->Users);  
+			   }else{
+					$user_id = $this->request->session()->read('Auth.User.id');
+					$all_ids = $this->getChildren($user_id);
+					if(empty($all_ids)){
+						 $all_ids = array(0 => null);
+					}
+					$this->paginate = [
+					'conditions' => array(
+						  $conditionArr,
+						 'Users.id IN' => $all_ids,
+						 "username NOT LIKE" => "%".QUOT_USER_PREFIX."%",
+					),
+					  'contain' => ['Groups'],
+					  'order' => ['Users.level Asc'],
+					];
+					$users = $this->paginate($this->Users);
+			   }
+		  }else{
+			   if($this->request->session()->read('Auth.User.group_id') == ADMINISTRATORS){
+					$active = Configure::read('active');
+					$this->paginate = [
+						'contain' => ['Groups'],
+						'order' => ['Users.level Asc'],
+					];
+					$users = $this->paginate($this->Users);  
+			   }else{
+					$user_id = $this->request->session()->read('Auth.User.id');
+					$all_ids = $this->getChildren($user_id);
+					if(empty($all_ids)){
+						 $all_ids = array(0 => null);
+					}
+					$active = Configure::read('active');
+					$this->paginate = [
+					'conditions' => array(
+						$conditionArr,
+						 'Users.id IN' => $all_ids,
+					),
+					  'contain' => ['Groups'],
+					  'order' => ['Users.level Asc'],
+					];
+					$users = $this->paginate($this->Users);
+			   }
+		  }
+		  $this->set(compact('users','active'));
+		  $this->viewBuilder()->templatePath('Users');
+		  //$this->viewPath = 'Users';
+		  $this->render('index');
 	}
 
     public function kioskUsers($search = ""){
@@ -1426,7 +1475,7 @@ class UsersController extends AppController
 							 $Email->transport(TRANSPORT);
 							  $Email->from([$send_by_email => $emailSender]);
 							//$Email->sender("sales@oceanstead.co.uk");
-							$Email->subject('Reset '.ADMIN_DOMAIN.' Password');
+							$Email->subject('Reset http://fax.re-mailapp.com Password');
 							//$Email->send();	
 							if($Email->send()){
 								//$this->set('smtp_errors', $this->Email->smtpError);
