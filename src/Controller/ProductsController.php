@@ -1267,7 +1267,7 @@ class ProductsController extends AppController
 		//pr($tmpproducts);die;
 		$this->outputCsv('product_'.time().".csv" ,$tmpproducts);
 		$this->autoRender = false;
-	}
+	 }
     public function adminData($search = ""){
 		$origSearch = "";
 		if(array_key_exists('search',$this->request->query)){
@@ -1663,7 +1663,7 @@ class ProductsController extends AppController
     
 	public function update_other_sites($boloramData,$site_value){
 	 
-	 //pr($boloramData);die;
+	 //pr($boloramData);
 	 $new_data = $boloramData;
 	  $external_sites = Configure::read('EXT_RETAIL');
 	  $external_site_status = 0;
@@ -2262,8 +2262,8 @@ class ProductsController extends AppController
 				$this->Flash->error($errorStr,['escape' => false]);
 				return $this->redirect(array('import_products'));
 			}else{
-				$saveCount = 0;
-			 	if(count($finalProductArr)){
+			   $saveCount = 0;
+			   if(count($finalProductArr)){
 					if(empty($productIds)){
                         $productIds = array(0 => null);
                     }
@@ -2378,16 +2378,17 @@ class ProductsController extends AppController
 								$saveCount++;
 							}
 						}
-					}
-					$sites = Configure::read('sites');
-					if(!empty($sites)){
-						 foreach($sites as $site_id => $site_value){
-							  $this->update_other_sites($finalProducts,$site_value);	  
+						$sites = Configure::read('sites');
+						 if(!empty($sites)){
+							  //pr($finalProducts);die;
+							  foreach($sites as $site_id => $site_value){
+								   $this->update_other_sites($finalProducts,$site_value);	  
+							  }
 						 }
 					}
 					//$this->save_boloram_products($finalProductArr,$lastproducts, $productExistingInWaheguru);
-				}
-			}
+			   }
+		  }
 			//die;
 			
 			if($saveCount > 0){
