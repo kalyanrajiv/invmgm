@@ -4,6 +4,7 @@ use App\Controller\AppController;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Event\Event;
+use Cake\Datasource\ConnectionManager;
 class ProductModelsController extends AppController
 {
     public $helpers = [
@@ -29,7 +30,35 @@ class ProductModelsController extends AppController
                             'contain' => 'Brands'
                           ];
 		$productModels = $this->paginate('ProductModels');
-		 
+		if(!empty($productModels)){
+			$productModels = $productModels->toArray();
+		}else{
+			$productModels = array();
+		}
+		$productCount = array();
+		$allProductModelQry = $this->ProductModels->find('list',[
+														  'keyField'=>'id',
+														  'valueField'=>'model',
+														  ]);
+		$allProductModelQry = $allProductModelQry->hydrate(false);
+		if(!empty($allProductModelQry)){
+			$allProductModel = $allProductModelQry->toArray();
+			foreach($allProductModel as $modelId => $modelsData){
+				$productsQry = $this->Products->find('all',['conditions'=>[
+																		   'model_id'=>$modelId,
+																		   ]
+															]
+													);
+				$productsQry = $productsQry->hydrate(false);
+				if(!empty($productsQry)){
+					$products = $productsQry->toArray();
+					$productCount[$modelId] = count($products);
+				}else{
+					$products = array();
+					$productCount[$modelId] = 0;
+				}
+			}
+		}
 		$brands_query = $this->Brands->find('list',[
                                                 'keyField' => 'id',
                                                 'valueField' => 'brand',
@@ -44,7 +73,7 @@ class ProductModelsController extends AppController
             $brands = array();
         }
 		//pr($brands);
-		$this->set(compact('brands','productModels'));
+		$this->set(compact('brands','productModels','productCount'));
 	}
     
     private function generate_condition_array(){
@@ -108,6 +137,14 @@ class ProductModelsController extends AppController
 	
 	public function add()
     {
+		$path = dirname(__FILE__);
+		$isMainSite = strpos($path, ADMIN_DOMAIN);
+		if($isMainSite == false){
+            $this->Flash->error(__("This function works only on ". ADMIN_DOMAIN));
+			return $this->redirect(array('controller' => 'home','action' => "dashboard"));die;
+		}
+		$sites = Configure::read('sites');
+		//pr($sites);die;
 		$this->loadModel('Brands');
         $mobileModel = $this->ProductModels->newEntity();
         if ($this->request->is('post')) {
@@ -155,6 +192,11 @@ class ProductModelsController extends AppController
 					$mobileModel = $this->ProductModels->newEntity();
 				   $mobileModel = $this->ProductModels->patchEntity($mobileModel, $d_value);
 				   if ($this->ProductModels->save($mobileModel)) {
+						if(!empty($sites)){
+						   foreach($sites as $site_id => $site_value){
+								$this->addModels2ExtSites($mobileModel,$site_value);
+						   }
+						}
 					   $counter ++;	
 				   }
 			   }
@@ -177,15 +219,46 @@ class ProductModelsController extends AppController
         $this->set('_serialize', ['mobileModel']);
     }
 
-
+	private function addModels2ExtSites($mobileModel,$site_value){
+		$connection = ConnectionManager::get($site_value);
+		$query = $connection->insert('product_models',[
+														'id'=>$mobileModel['id'],
+													   'brand_id'=>$mobileModel['brand_id'],
+													   'model'=>$mobileModel['model'],
+													   'brief_description'=>$mobileModel['brief_description'],
+													   'status'=>$mobileModel['status'],
+													   'created'=>date("Y-m-d h-i-s"),
+													   'modified'=>date("Y-m-d h-i-s"),
+													   ]);
+	}
 
     public function edit($id = null){
+		$path = dirname(__FILE__);
+		$isMainSite = strpos($path, ADMIN_DOMAIN);
+		if($isMainSite == false){
+            $this->Flash->error(__("This function works only on ". ADMIN_DOMAIN));
+			return $this->redirect(array('controller' => 'home','action' => "dashboard"));die;
+		}
+		$sites = Configure::read('sites');
         $mobileModel = $this->ProductModels->get($id, [
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $mobileModel = $this->ProductModels->patchEntity($mobileModel, $this->request->data);
             if ($this->ProductModels->save($mobileModel)) {
+				if(!empty($sites)){
+					foreach($sites as $site_id => $site_value){
+						$conn = ConnectionManager::get($site_value);
+						$statement = $conn->update('product_models',[
+																	'brand_id'=>$mobileModel['brand_id'],
+																	'model'=>$mobileModel['model'],
+																	'brief_description'=>$mobileModel['brief_description'],
+																	'status'=>$mobileModel['status'],
+																	'created'=>date("Y-m-d h-i-s",strtotime($mobileModel['created'])),
+																	'modified'=>date("Y-m-d h-i-s",strtotime($mobileModel['modified'])),
+																	],['id' => $id]);		 
+					}
+				}
                 $this->Flash->success(__('The Product model has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -208,16 +281,36 @@ class ProductModelsController extends AppController
     }
 
     public function delete($id = null){
+		$path = dirname(__FILE__);
+		$isMainSite = strpos($path, ADMIN_DOMAIN);
+		if($isMainSite == false){
+            $this->Flash->error(__("This function works only on ". ADMIN_DOMAIN));
+			return $this->redirect(array('controller' => 'home','action' => "dashboard"));die;
+		}
         $this->request->allowMethod(['post', 'delete']);
         $mobileModel = $this->ProductModels->get($id);
         if ($this->ProductModels->delete($mobileModel)) {
+			$this->deleteModelFromExternal($id);
             $this->Flash->success(__('The Product model has been deleted.'));
         } else {
             $this->Flash->error(__('The Product model could not be deleted. Please, try again.'));
         }
-
+        
         return $this->redirect(['action' => 'index']);
     }
+	
+	private function deleteModelFromExternal($id){
+		$sites = Configure::read('sites');
+		foreach($sites  as $key => $value){
+			$connection = ConnectionManager::get($value);
+			$stmt = $connection->execute("SELECT * FROM `product_models` WHERE `id`=$id");
+			$Catdata = $stmt ->fetchAll('assoc');
+			//pr($Catdata);die;
+			if(count($Catdata) > 0){
+				$connection->execute("DELETE FROM `product_models` WHERE `id`=$id");
+			}
+		}
+	}
     
     public function export(){
 		$conditionArr = array();

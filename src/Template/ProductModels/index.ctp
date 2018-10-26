@@ -94,6 +94,7 @@ use Cake\I18n\Time;
                 <th scope="col"><?= $this->Paginator->sort('brand_id') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('model') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('brief_description') ?></th>
+				<th scope="col"><?= ('Products Count') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('status') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('created') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
@@ -107,6 +108,7 @@ use Cake\I18n\Time;
                 <td><?= $productModel->has('brand') ? $this->Html->link($brands[$productModel->brand->id], ['controller' => 'Brands', 'action' => 'view', $productModel->brand->id]) : '' ?></td>
                 <td><?= h($productModel->model) ?></td>
                 <td><?= h($productModel->brief_description) ?></td>
+				<td><?= ($productCount[$productModel->id]) ?></td>
                 <td><?=  $activeOptions[$productModel->status] ?></td>
                 <?php
                         $created = $productModel->created;
