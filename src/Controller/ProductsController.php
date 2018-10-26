@@ -2846,6 +2846,12 @@ class ProductsController extends AppController
 			throw new NotFoundException(__('Invalid product'));
 		}
 		if ($this->request->is(array('post', 'put'))) {
+		  if(array_key_exists('additional_model',$this->request->data)){
+			   unset($this->request->data['additional_model']);
+		  }
+		  if(array_key_exists('additional_model_id',$this->request->data) && !empty($this->request->data['additional_model_id'])){
+			   $this->request->data['additional_model_id'] = implode(',',$this->request->data['additional_model_id']);
+		  }
            //pr($this->request);die;
 		 $this->request->data['user_id'] = $this->request->session()->read('Auth.User.id');
 		 $this->request->data['created'] = date('Y-m-d h:i:s');
@@ -2878,7 +2884,6 @@ class ProductsController extends AppController
          //  pr($this->request->data);die;
             
             $productpatchEntity = $this->Products->patchEntity($productEntity, $this->request->data);
-           //  pr($productpatchEntity);die;
            	if ($this->Products->save($productpatchEntity)) {
                 $data = $this->request->data;
                  //$data_query = $data_query->hydrate(false);
