@@ -27,6 +27,7 @@ use Cake\Routing\Router;
     <?php
   
         $rootURL = Router::url('/', true);
+		$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 		$queryStr = "";
        // echo $rootURL = $this->Html->link('home', '/');
        //  $rootURL =  $this->Html->link('/');
@@ -206,9 +207,9 @@ use Cake\Routing\Router;
 				 //echo $absoluteImagePath;die;
                 $imageURL = "/thumb_no-image.png";
 				 $largeImageURL = $imageURL;    
-				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-                      $imageURL = "$siteBaseURL/files/Products/image/".$product->id."/$imageName";
-					  $largeImageURL = "$siteBaseURL/files/Products/image/".$product->id."/$largeImageName"; //rasu
+				if(!empty($imageName)){
+                      $imageURL = "$adminDomainURL/files/Products/image/".$product->id."/$imageName";
+					  $largeImageURL = "$adminDomainURL/files/Products/image/".$product->id."/$largeImageName"; //rasu
 				}
 					echo $this->Html->link(
 										 $this->Html->image($imageURL, array('fullBase' => false,'width'=>'100px','height'=>'100px')), //rasu

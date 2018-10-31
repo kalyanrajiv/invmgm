@@ -1,5 +1,6 @@
 <?php
 use Cake\Utility\Text;
+$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 ?>
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
@@ -89,11 +90,9 @@ use Cake\Utility\Text;
 						$absoluteImagePath = $imageDir.$imageName;
 						//$imageURL = "/thumb_no-image.png";
 						$LargeimageURL = $imageURL = "/thumb_no-image.png";
-						if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-							//$applicationURL = $this->html->url('/', true);
-							//$imageURL = $applicationURL."files/product/image/".$product['Product']['id']."/thumb_$imageName";
-							$imageURL = "$siteBaseURL/files/Categories/image/".$category->id."/$imageName";
-							$LargeimageURL = "$siteBaseURL/files/Categories/image/".$category->id."/"."$largeImageName";
+						if(!empty($imageName)){
+							$imageURL = "$adminDomainURL/files/Categories/image/".$category->id."/thumb_$imageName";
+							$LargeimageURL = "$adminDomainURL/files/Categories/image/".$category->id."/"."$largeImageName";
 						}
 					 $i++;
 					$groupStr.="\n$(\".group{$i}\").colorbox({rel:'group{$i}'});";

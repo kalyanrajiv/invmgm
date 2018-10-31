@@ -2,6 +2,7 @@
 		use Cake\Core\Configure;
 		use Cake\Core\Configure\Engine\PhpConfig;
 		$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+		$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 		$jQueryURL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
 		if(defined('URL_SCHEME')){
 			$jQueryURL = URL_SCHEME."ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
@@ -302,10 +303,10 @@
 		$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$product['id'].DS;
 		$imageName = $product['image'];
 		$absoluteImagePath = $imageDir.$imageName;
-		$largeImageURL = $imageURL = "/thumb_no-image.png";
-		if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-			$imageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/thumb_".$imageName;
-			$largeImageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/vga_".$imageName;
+		$largeimageURL = $imageURL = "/thumb_no-image.png";
+		if(!empty($imageName)){
+			$imageURL = "{$adminDomainURL}/files/Products/image/".$product['id']."/thumb_".$imageName;
+			$largeimageURL = "{$adminDomainURL}/files/Products/image/".$product['id']."/vga_".$imageName;
 		}
 		$productQuantity = "";
 		$productPrice = $product['selling_price'];
@@ -370,7 +371,7 @@
 		<td><?php
 			echo $this->Html->link(
 							$this->Html->image($imageURL, array('fullBase' => true,'width' => '95px','height' => '90px')),
-							$largeImageURL,
+							$largeimageURL,
 							array('escapeTitle' => false, 'title' => $product['product'],'class' => "group{$key}")
 					);
 		
@@ -606,10 +607,10 @@
 				$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$cancelProduct['id'].DS;
 				$imageName =  $cancelProduct['image'];
 				$absoluteImagePath = $imageDir.$imageName;
-				$imageURL = "/thumb_no-image.png";
-				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-					$imageURL = "$siteBaseURL/files/Products/image/".$cancelProduct['id']."/thumb_".$imageName;
-					$largeImageURL = "$siteBaseURL/files/Products/image/".$cancelProduct['id']."/$largeImageName"; //rasu
+				$largeImageURL = $imageURL = "/thumb_no-image.png";
+				if(!empty($imageName)){
+					$imageURL = "$adminDomainURL/files/Products/image/".$cancelProduct['id']."/thumb_".$imageName;
+					$largeImageURL = "$adminDomainURL/files/Products/image/".$cancelProduct['id']."/$largeImageName"; //rasu
 				}
 				?>
 				<tr style="color: red;">

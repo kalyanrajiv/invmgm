@@ -3,6 +3,7 @@
 	use Cake\Core\Configure\Engine\PhpConfig;	
 	$currency = Configure::read('CURRENCY_TYPE');
 	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+	$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 	//$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
 	$kiosk_id = $value = '';
 	if(!empty($this->request->query['search_kw'])){
@@ -174,9 +175,14 @@
 			
 				$imageDir = WWW_ROOT.DS."files".DS.'Products'.DS.'image'.DS.$product->id.DS;
 				$imageName = $product->image;
+				$largeImageName = 'vga_'.$imageName;
 				$absoluteImagePath = $imageDir.$imageName;
-				$imageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/thumb_".$imageName;
-				$largeImageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/vga_"."$imageName";
+				$imageURL = "/thumb_no-image.png";
+				$largeImageURL = $imageURL;
+				if(!empty($imageName)){
+					$imageURL = $adminDomainURL.'/files/Products/image/'.$product->id.DS."thumb_".$imageName;
+					$largeImageURL = $adminDomainURL.'/files/Products/image/'.$product->id.DS.$largeImageName;
+				}
 		?>
 		<tr>
 			<td>

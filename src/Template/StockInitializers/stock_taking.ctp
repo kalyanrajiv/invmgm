@@ -2,6 +2,7 @@
 	use Cake\Core\Configure;
 	use Cake\Core\Configure\Engine\PhpConfig;
 	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+	$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 	extract($this->request->query);
 	if(!isset($search_kw)){$search_kw = "";}
 	$sessionBaket = $this->request->Session()->read("stock_taking_basket");
@@ -205,10 +206,11 @@
 		$imageDir = WWW_ROOT.DS."files".DS.'Products'.DS.'image'.DS.$centralStock->id.DS;
 		$imageName = $centralStock->image;
 		$absoluteImagePath = $imageDir.$imageName;
-		$LargeimageURL = $imageURL = "/thumb_no-image.png";
-		if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-			$imageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/thumb_".$imageName;
-			$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/vga_"."$imageName";
+		$largeImageName = 'vga_'.$imageName;
+		$largeImageURL = $imageURL = "/thumb_no-image.png";
+		if(!empty($imageName)){
+			$imageURL = $adminDomainURL.'/files/Products/image/'.$centralStock->id.DS."thumb_".$imageName;
+			$largeImageURL = $adminDomainURL.'/files/Products/image/'.$centralStock->id.DS.$largeImageName;
 		}
 		$sellingPrice = $centralStock->selling_price;
 		$productQuantity = '';
@@ -243,7 +245,7 @@
 		<td><?php
 			echo $this->Html->link(
 					$this->Html->image($imageURL, array('fullBase' => true,'width' => '100px','height' => '100px')),
-					$LargeimageURL,
+					$largeImageURL,
 					array('escapeTitle' => false, 'title' => $centralStock->product,"class" => "group{$key}")
 				);
 			?>

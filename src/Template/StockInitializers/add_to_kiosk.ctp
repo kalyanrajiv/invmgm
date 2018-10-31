@@ -2,6 +2,7 @@
 	use Cake\Core\Configure;
  use Cake\Core\Configure\Engine\PhpConfig;
  $siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+ $adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 	#pr($centralStocks);
 	extract($this->request->query);
 	if(!isset($search_kw)){$search_kw = "";}
@@ -161,9 +162,9 @@
 		$imageName = $centralStock->image;
 		$absoluteImagePath = $imageDir.$imageName;
 		$LargeimageURL = $imageURL = "/thumb_no-image.png";
-		if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-			$imageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/thumb_".$imageName;
-			$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/vga_"."$imageName";
+		if(!empty($imageName)){
+			$imageURL = $adminDomainURL.'/files/Products/image/'.$centralStock->id.DS."thumb_".$imageName;
+			$LargeimageURL = $adminDomainURL.'/files/Products/image/'.$centralStock->id.DS."vga_".$imageName;
 		}
 		$sellingPrice = $centralStock->selling_price;
 		$productQuantity = '';

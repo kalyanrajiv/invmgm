@@ -22,6 +22,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 </style>
 <?php
 	$currency = Configure::read('CURRENCY_TYPE');
+	$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 	//$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
 ?>
 <?php
@@ -134,8 +135,8 @@ use Cake\Core\Configure\Engine\PhpConfig;
 		$imageName = $centralStock->image;
 		$absoluteImagePath = $imageDir.$imageName;
 		$imageURL = "/thumb_no-image.png";
-		if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-			$imageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/$imageName"; //rasu
+		if(!empty($imageName)){
+			$imageURL = "{$adminDomainURL}/files/Products/image/".$centralStock->id."/thumb_"."$imageName"; //rasu
 		}
 		$productQuantity = "";
 		$productPrice = $centralStock->selling_price;

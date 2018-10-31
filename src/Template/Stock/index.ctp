@@ -3,6 +3,7 @@
 	use Cake\Core\Configure\Engine\PhpConfig;
 	$currency = Configure::read('CURRENCY_TYPE');
 	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+	$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 	//$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
 ?>
 <style>
@@ -189,13 +190,11 @@
                 $product_id = $product['id'];
 				
 				$largeimageURL = "";
-				if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-				
-					//$applicationURL = $this->html->url('/', true);
-					//$imageURL = $applicationURL."files/product/image/".$product['Product']['id']."/{thumb_}$imageName";
-					$imageURL = "$siteBaseURL/files/Products/image/".$product['id']."/thumb_".$imageName; //rasu
-					$largeimageURL = "$siteBaseURL/files/Products/image/".$product['id']."/vga_"."$imageName"; //rasu
+				if(!empty($imageName)){
+					$imageURL = $adminDomainURL.'/files/Products/image/'.$product['id'].DS."thumb_".$imageName;
+					$largeImageURL = $adminDomainURL.'/files/Products/image/'.$product['id'].DS."vga_".$imageName;
 				}
+				
 					echo $this->Html->link(
 							  $this->Html->image($imageURL, ['fullBase' => true,'width' => '100px','height' => '100px']), //rasu
 							  $largeimageURL,

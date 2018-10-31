@@ -2,6 +2,7 @@
  use Cake\Core\Configure;
  use Cake\Core\Configure\Engine\PhpConfig;
  $siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+ $adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 ?>
 <style>
  #remote .tt-dropdown-menu {max-height: 250px;overflow-y: auto;}
@@ -231,9 +232,9 @@
 		$absoluteImagePath = $imageDir.$imageName;
 		$imageURL = "/thumb_no-image.png";
 		$largeImageURL = "/vga_thumb_no-image.png";
-		if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-			$imageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/thumb_".$imageName;
-			$largeImageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/vga_"."$imageName";
+		if(!empty($imageName)){
+			$imageURL = $adminDomainURL.'/files/Products/image/'.$centralStock->id.DS."thumb_".$imageName;
+			$largeImageURL = $adminDomainURL.'/files/Products/image/'.$centralStock->id.DS."vga_".$imageName;
 		}
 		$productQuantity = "";
 		$productPrice = $centralStock->selling_price;

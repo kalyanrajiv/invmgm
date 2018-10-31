@@ -7,6 +7,7 @@
 		if(defined('URL_SCHEME')){
 		$jQueryURL = URL_SCHEME."ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
 		}
+		$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 ?>
 <script type="text/javascript" src="<?php echo $jQueryURL;?>"></script>
 <?php
@@ -94,18 +95,17 @@
 		$currentPageNumber = $this->Paginator->current();
 		$counter++;
 		$groupStr.="\n$(\".group{$key}\").colorbox({rel:'group{$key}'});";
-?>
-	<?php $row_id = $product['id']?>
-	<?php
-                $truncatedProduct = \Cake\Utility\Text::truncate(
-                                $product['product']['product'],
-                                50,
-                                [
-                                    'ellipsis' => '...',
-                                    'exact' => false
-                                ]
-                        );
-        ?>
+		
+		$row_id = $product['id'];
+		$truncatedProduct = \Cake\Utility\Text::truncate(
+							 $product['product']['product'],
+							 50,
+							 [
+								  'ellipsis' => '...',
+								  'exact' => false
+							 ]
+				  );
+	?>
 	
 	<tr>
             <td><?php echo $product['product']['product_code'];
@@ -125,20 +125,20 @@
                 
             <td>
                 <?php                    
-                    $imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$product['product']['id'].DS;
-                    $imageName = $product['product']['image'];
-                    $absoluteImagePath = $imageDir.$imageName;
-                    $largeimageURL = $imageURL = "/thumb_no-image.png";
-                    if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-																						$imageURL = "$siteBaseURL/files/Products/image/".$product['product']['id']."/thumb_".$imageName;
-																						$largeimageURL = "$siteBaseURL/files/Products/image/".$product['product']['id']."/vga_".$imageName;
-                    }
-                            
-                    echo $this->Html->link(
-																																											$this->Html->image($imageURL, array('fullBase' => true,'width' => '100px','height' => '100px')),
-																																											$largeimageURL,
-																																											array('escapeTitle' => false, 'title' => $product['product']['product'],'class' => "group{$key}")
-																																										);
+							$imageDir = WWW_ROOT."files".DS.'Products'.DS.'image'.DS.$product['product']['id'].DS;
+							$imageName = $product['product']['image'];
+							$absoluteImagePath = $imageDir.$imageName;
+							$largeimageURL = $imageURL = "/thumb_no-image.png";
+							if(!empty($imageName)){
+								$imageURL = "$adminDomainURL/files/Products/image/".$product['product']['id']."/thumb_".$imageName;
+								$largeimageURL = "$adminDomainURL/files/Products/image/".$product['product']['id']."/vga_".$imageName;
+							}
+								
+							echo $this->Html->link(
+															$this->Html->image($imageURL, array('fullBase' => true,'width' => '100px','height' => '100px')),
+															$largeimageURL,
+															array('escapeTitle' => false, 'title' => $product['product']['product'],'class' => "group{$key}")
+														);
                 ?>
             </td>
             <td><?php

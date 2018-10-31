@@ -3,6 +3,7 @@ $jQueryURL = "https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
 if(defined('URL_SCHEME')){
 	$jQueryURL = URL_SCHEME."ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js";
 }
+$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 ?>
 <script type="text/javascript" src="<?php echo $jQueryURL;?>"></script>
 <?php echo $this->Html->script('jquery.printElement');
@@ -263,8 +264,8 @@ echo $this->Html->script('jquery.blockUI');
 																				$largeImageName = 'vga_'.$product['product']['image'];
                     $absoluteImagePath = $imageDir.$imageName;
 																				$LargeimageURL =  $imageURL = "/thumb_no-image.png";
-                    if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-                        $imageURL = "{$siteBaseURL}/files/Products/image/".$product['product']['id']."/$imageName"; //rasu
+                    if(!empty($imageName)){
+                        $imageURL = "{$adminDomainURL}/files/Products/image/".$product['product']['id']."/$imageName"; //rasu
 																								$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$product['product']['id']."/"."$largeImageName"; //rasu
                     }
                             
@@ -323,9 +324,9 @@ echo $this->Html->script('jquery.blockUI');
 			$absoluteImagePath = $imageDir.$imageName;
 			$LargeimageURL = $imageURL = "/thumb_no-image.png";
 			
-			if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-				$imageURL = "{$siteBaseURL}/files/product/image/".$prID."/$imageName"; //rasu
-				$LargeimageURL = "{$siteBaseURL}/files/product/image/".$prID."/vga_"."$imageName"; //rasu
+			if(!empty($imageName)){
+				$imageURL = "{$adminDomainURL}/files/product/image/".$prID."/$imageName"; //rasu
+				$LargeimageURL = "{$adminDomainURL}/files/product/image/".$prID."/vga_"."$imageName"; //rasu
 			}
 					$sr_no = $cancelledProd['sr_no'];
 			echo "<tr style='color: red;'><td>$sr_no</td><td>$product_code</td><td>$productTitle</td><td>";

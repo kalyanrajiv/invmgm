@@ -20,7 +20,7 @@
 		$path = dirname(__FILE__);
 		$isMainDomain = false;
 		$isMainDomain = strpos($path,ADMIN_DOMAIN);
-
+		$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 //$currentAction = $this->request->action;
 //	$curentController = $this->request->params['controller'];
 //	$currentUrl = $curentController.'/'.$currentAction;
@@ -245,9 +245,9 @@ echo $this->Html->script('jquery.blockUI');
 		$absoluteImagePath = $imageDir.$imageName;
 		$LargeimageURL = $imageURL = "/thumb_no-image.png";
 		
-		if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-			$imageURL = "/files/Products/image/".$warehouseStock->id."/$imageName";
-			$LargeimageURL = "/files/Products/image/".$warehouseStock->id."/vga_"."$imageName";
+		if(!empty($imageName)){
+			$imageURL = $adminDomainURL.'/files/Products/image/'.$warehouseStock->id.DS."thumb_".$imageName;
+			$LargeimageURL = $adminDomainURL.'/files/Products/image/'.$warehouseStock->id.DS."vga_".$imageName;
 		}
 		
 		$warehouseQuantity = '';

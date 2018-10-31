@@ -2,6 +2,7 @@
 	use Cake\Core\Configure;
 	use Cake\Core\Configure\Engine\PhpConfig;
 	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+	$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 ?>
 <?php if(!isset($search_kw)){$search_kw = "";}?>
 <?php
@@ -171,11 +172,9 @@
 				$absoluteImagePath = $imageDir.$imageName;
 				$LargeimageURL = $imageURL = "/thumb_no-image.png";
                 //echo $absoluteImagePath;die;
-				if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-					//$applicationURL = $this->html->url('/', true);
-					//$imageURL = $applicationURL."files/product/image/".$product['Product']['id']."/thumb_$imageName";
-					$imageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/thumb_".$imageName; //rasu
-					$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/vga_"."$imageName";
+				if(!empty($imageName)){
+					$imageURL = "{$adminDomainURL}/files/Products/image/".$product->id."/thumb_".$imageName; //rasu
+					$LargeimageURL = "{$adminDomainURL}/files/Products/image/".$product->id."/vga_"."$imageName";
 				}
 					
 					echo $this->Html->link(
