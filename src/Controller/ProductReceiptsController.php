@@ -8737,6 +8737,7 @@ class ProductReceiptsController extends AppController
 		$agent_id = 0;
 		//pr($this->request->query);die;
 		if(array_key_exists('acc_manger',$this->request->query) && !empty($this->request->query['acc_manger']) && $this->request->query['acc_manger'] != 'undefined'){
+            //by yamini - 31stOCT
 			$agent_id = $this->request->query['acc_manger'];
 			$agent_cust_res = $this->Customers->find("list",['conditions' => [
 														   "agent_id" => $agent_id,
