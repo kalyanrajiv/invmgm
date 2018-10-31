@@ -8735,7 +8735,8 @@ class ProductReceiptsController extends AppController
 		
 		
 		$agent_id = 0;
-		if(array_key_exists('acc_manger',$this->request->query) && !empty($this->request->query['acc_manger'])){
+		//pr($this->request->query);die;
+		if(array_key_exists('acc_manger',$this->request->query) && !empty($this->request->query['acc_manger']) && $this->request->query['acc_manger'] != 'undefined'){
 			$agent_id = $this->request->query['acc_manger'];
 			$agent_cust_res = $this->Customers->find("list",['conditions' => [
 														   "agent_id" => $agent_id,
@@ -8777,6 +8778,7 @@ class ProductReceiptsController extends AppController
 				}else{
 					$cutomerReceipts = array();
 				}
+				//pr($cutomerReceipts);die;
 				$receiptIDs = array();
 				$conditionArr['product_receipt_id IN'] = 0;
 				if( count($cutomerReceipts) ){
@@ -8802,7 +8804,6 @@ class ProductReceiptsController extends AppController
                                         'product_receipt_id' => 'desc'
                                     ],
 				])->toArray();
-		//pr($pay_res);die;
 		//$pay_res_query = $pay_res_query->hydrate(false);
 		//if(!empty($pay_res_query)){
 		//	$pay_res = $pay_res_query->toArray();
@@ -8819,6 +8820,7 @@ class ProductReceiptsController extends AppController
 		if(empty($recipt_ids)){
             $recipt_ids = array(0 => null);
         }
+		//pr($recipt_ids);die;
 		$recipt_table_data_query = $receiptTable->find('all',[
 								   'conditions' => ['id IN' => $recipt_ids]
 								   ]);
@@ -8836,7 +8838,7 @@ class ProductReceiptsController extends AppController
 		if(!empty($reciptTableData)){
 			$recipt_table_data = $reciptTableData;
 		}
-		
+		//pr($recipt_table_data);die;
 		$kiosks = $this->Kiosks->find('list',[
                                                 'keyField' => 'id',
                                                 'valueField' => 'name',
