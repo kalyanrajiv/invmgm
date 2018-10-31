@@ -39,6 +39,7 @@
     $adminSite = false;
     if (strpos($path, ADMIN_DOMAIN) !== false) {$adminSite = TRUE;}
     $group1Str = $group2Str = "";
+	$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 	//replace WWW_ROOT by this code because of sub-domain or add it to config
 ?>
 <div id="flash_msg" style="clear: both;color: #fff;background: #c43c35;border: 1px solid rgba(0, 0, 0, 0.5);background-repeat: repeat-x;text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);font-size: 19px;"><?php if(!empty(trim($basketStr))){ echo $basketStr; } ?></div>
@@ -76,16 +77,15 @@
             $largeImageName = 'vga_'.$imageName;
             
             $absoluteImagePath = $imageDir.$imageName;
-            $imageURL = "/thumb_no-image.png";
-            if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-                $imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id']."/$imageName";
-            }
-            $imageURL = "/thumb_no-image.png";
-            $largeImageURL = $imageURL;    
-            if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-                $imageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS."thumb_".$imageName;
+            $largeImageURL = $imageURL = "/thumb_no-image.png";
+            if(@file_get_contents($adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS.$imageName)){
+				$imageURL = $adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS."thumb_".$imageName;
+                $largeImageURL = $adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS.$largeImageName;
+			}elseif( @readlink($absoluteImagePath) ||file_exists($absoluteImagePath) ){
+                $imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id'].DS."thumb_".$imageName;
                 $largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS.$largeImageName; //rasu
             }
+            
             $image =  $this->Html->link(
                                         $this->Html->image($imageURL, array(
                                                                             'fullBase' => true,
@@ -149,15 +149,15 @@ TABLE;
                 $largeImageName = 'vga_'.$imageName;
                 $absoluteImagePath = $imageDir.$imageName;
 				$imageURL = "/thumb_no-image.png";
-				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-					$imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id']."/$imageName";
-				}
-                
-				$imageURL = "/thumb_no-image.png";
-				$largeImageURL = $imageURL;    
-				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-                      $imageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS."thumb_".$imageName;
-					  $largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS.$largeImageName; //rasu
+                $imageURL = "/thumb_no-image.png";
+				$largeImageURL = $imageURL;
+				
+				if(@file_get_contents($adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS.$imageName)){
+					$imageURL = $adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS."thumb_".$imageName;
+					$largeImageURL = $adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS.$largeImageName;
+				}elseif( @readlink($absoluteImagePath) ||file_exists($absoluteImagePath) ){
+					$imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id'].DS."thumb_".$imageName;
+					$largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS.$largeImageName; //rasu
 				}
 				$image =  $this->Html->link(
                                             $this->Html->image($imageURL, array(

@@ -11,6 +11,7 @@
     }else{
         $sitePath = 'mbwaheguru.co.uk';
     }
+	$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 	$www_root = "/var/www/vhosts/{$sitePath}/httpdocs/app/webroot/";
 	$group1Str = $group2Str = "";
 	//replace WWW_ROOT by this code because of sub-domain or add it to config
@@ -35,9 +36,12 @@
 				$largeImageURL = $imageURL = "/thumb_no-image.png";
 				$afterDiscountPrice = number_format($productNotice['selling_price']-$productNotice['selling_price']*$productNotice['discount']/100,2);
 				//pr($absoluteImagePath);die;
-				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-					$imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id']."/$imageName";
-					$largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id']."/$largeImageName"; //rasu
+				if(@file_get_contents($adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS.$imageName)){
+					$imageURL = $adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS."thumb_".$imageName;
+					$largeImageURL = $adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS.$largeImageName;
+				}elseif( @readlink($absoluteImagePath) ||file_exists($absoluteImagePath) ){
+					$imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id'].DS."thumb_".$imageName;
+					$largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS.$largeImageName; //rasu
 				}
                 //echo $imageURL;die;
 				$image =  $this->Html->link(
@@ -73,9 +77,12 @@ TABLE;
 				$absoluteImagePath = $imageDir.$imageName;
 				$imageURL = "/thumb_no-image.png";
 				$afterDiscountPrice = number_format($productNotice['selling_price']-$productNotice['selling_price']*$productNotice['discount']/100,2);
-				if(@readlink($absoluteImagePath) ||file_exists($absoluteImagePath)){
-					$imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id']."/$imageName";
-					$largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id']."/$largeImageName"; //rasu
+				if(@file_get_contents($adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS.$imageName)){
+					$imageURL = $adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS."thumb_".$imageName;
+					$largeImageURL = $adminDomainURL.'/files/Products/image/'.$productNotice['id'].DS.$largeImageName;
+				}elseif( @readlink($absoluteImagePath) ||file_exists($absoluteImagePath) ){
+					$imageURL = "{$siteBaseURL}/files/Products/image/".$productNotice['id'].DS."thumb_".$imageName;
+					$largeImageURL = "$siteBaseURL/files/Products/image/".$productNotice['id'].DS.$largeImageName; //rasu
 				}
 				$image =  $this->Html->link(
 											$this->Html->image($imageURL, array('fullBase' => true,'escapeTitle' => false, 'title' => $productNotice['Product'], 'style' => 'width:80px;height:80px;')),
