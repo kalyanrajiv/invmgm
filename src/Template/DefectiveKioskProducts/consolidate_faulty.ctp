@@ -2,6 +2,7 @@
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\I18n\Time;
+$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 ?>
 <div class="mobilePurchases index">
 	<?php 
@@ -149,9 +150,9 @@ use Cake\I18n\Time;
 			$imageName =  $productData['image'];
 			$absoluteImagePath = $imageDir.$imageName;
 			$LargeimageURL = $imageURL = "/thumb_no-image.png";
-			if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-				$imageURL = "{$siteBaseURL}/files/Products/image/".$productData['id']."/$imageName";
-				$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$productData['id']."/vga_"."$imageName";
+			if(!empty($imageName)){
+				$imageURL = "{$adminDomainURL}/files/Products/image/".$productData['id']."/thumb_"."$imageName";
+				$LargeimageURL = "{$adminDomainURL}/files/Products/image/".$productData['id']."/vga_"."$imageName";
 			}
 			
 			$productCode = $productData['product_code'];

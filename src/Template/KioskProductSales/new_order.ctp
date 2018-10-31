@@ -6,6 +6,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
   <?php
   //pr($this->request->session()->read("Auth"));die;
   $siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
+  $adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
   //pr($this->Session->read());
   ?>
 </head>
@@ -223,9 +224,9 @@ $kioskId = $this->request->Session()->read('kiosk_id');
 		  $absoluteImagePath = $imageDir.$imageName;
 		  $imageURL = "/thumb_no-image.png";
 		  $largeImageURL = $imageURL;         
-		  if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-			$imageURL = "$siteBaseURL/files/Products/image/".$product->id."/$imageName";
-			$largeImageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/$largeImageName"; //rasu
+		  if(!empty($imageName)){
+			$imageURL = "{$adminDomainURL}/files/Products/image/".$product->id."/thumb_"."$imageName";
+			$largeImageURL = "{$adminDomainURL}/files/Products/image/".$product->id."/$largeImageName"; //rasu
 		  }
                 
 		  $productQuantity = 1;

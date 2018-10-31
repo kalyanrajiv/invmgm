@@ -12,6 +12,7 @@ use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Routing\Router;
 
+$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 $currency = Configure::read('CURRENCY_TYPE');
 //$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
 $siteBaseURL = Configure::read('SITE_BASE_URL');
@@ -77,9 +78,9 @@ if(array_key_exists($referenceArr['user_id'],$users)){
 			$imageName =  $productArr[$defectiveTransient['product_id']]['image'];
 			$absoluteImagePath = $imageDir.$imageName;
 			$LargeimageURL = $imageURL = "/thumb_no-image.png";
-			if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-				$imageURL = "{$siteBaseURL}/files/Products/image/".$defectiveTransient['product_id']."/$imageName";
-				$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$defectiveTransient['product_id']."/vga_"."$imageName";
+			if(!empty($imageName)){
+				$imageURL = "{$adminDomainURL}/files/Products/image/".$defectiveTransient['product_id']."/thumb_"."$imageName";
+				$LargeimageURL = "{$adminDomainURL}/files/Products/image/".$defectiveTransient['product_id']."/vga_"."$imageName";
 			}
 			?>
 		<tr>

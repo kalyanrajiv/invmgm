@@ -1,6 +1,6 @@
 <div class="brands index">
 <?php
-	
+	$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 	//$www_root = '/var/www/vhosts/'.ADMIN_DOMAIN.'/httpdocs/app/webroot/';
 ?>
 <div style="margin-right: 72px;">
@@ -65,8 +65,8 @@
 				$imageName = $product['image'];
 				$absoluteImagePath = $imageDir.$imageName;
 				$imageURL = "/thumb_no-image.png";
-				if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-					$imageURL = "{$siteBaseURL}/files/Products/image/".$product['id']."/$imageName";
+				if(!empty($imageName)){
+					$imageURL = "{$adminDomainURL}/files/Products/image/".$product['id']."/thumb_"."$imageName";
 				}
 				$product_currentquantity = $product['quantity']; 
 				$product_soldquantity = $product_quantities[$product_id];

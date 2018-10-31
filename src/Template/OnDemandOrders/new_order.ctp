@@ -2,7 +2,8 @@
  use Cake\Core\Configure;
  use Cake\Core\Configure\Engine\PhpConfig;
  $siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
- $currencySymbol = Configure::read('CURRENCY_TYPE');	
+ $currencySymbol = Configure::read('CURRENCY_TYPE');
+ $adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
  echo $this->Html->script('smoothness-jquery-ui.min.css');
 ?>
 <style>
@@ -146,9 +147,9 @@ Once user are sure, no more extra items are required for the day; <br/> Restore 
 		  $absoluteImagePath = $imageDir.$imageName;
 		  $imageURL = "/thumb_no-image.png";
 		  $largeImageURL = $imageURL;         
-		  if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-      $imageURL = "$siteBaseURL/files/Products/image/".$product->id."/thumb_".$imageName;
-      $largeImageURL = "{$siteBaseURL}/files/Products/image/".$product->id."/".$largeImageName; //rasu
+		  if(!empty($imageName)){
+      $imageURL = "{$adminDomainURL}/files/Products/image/".$product->id."/thumb_".$imageName;
+      $largeImageURL = "{$adminDomainURL}/files/Products/image/".$product->id."/".$largeImageName; //rasu
 		  }
                 
 		  $productQuantity = 1;

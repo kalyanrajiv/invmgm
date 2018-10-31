@@ -4,6 +4,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 $currency = Configure::read('CURRENCY_TYPE');
 //$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
 $siteBaseURL = Configure::read('SITE_BASE_URL');
+$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 if(!isset($search_kw)){$search_kw = "";}
 ?>
 <div class="mobileUnlocks index">
@@ -78,9 +79,9 @@ if(!isset($search_kw)){$search_kw = "";}
 			$imageName =  $productArr[$defectiveBinDetail->product_id]['image'];
 			$absoluteImagePath = $imageDir.$imageName;
 			$LargeimageURL = $imageURL = "/thumb_no-image.png";
-			if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-				$imageURL = "{$siteBaseURL}/files/Products/image/".$defectiveBinDetail->product_id."/$imageName";
-				$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$defectiveBinDetail->product_id."/vga_"."$imageName";
+			if($imageName){
+				$imageURL = "{$adminDomainURL}/files/Products/image/".$defectiveBinDetail->product_id."/thumb_"."$imageName";
+				$LargeimageURL = "{$adminDomainURL}/files/Products/image/".$defectiveBinDetail->product_id."/vga_"."$imageName";
 			}
 			?>
 		<tr>

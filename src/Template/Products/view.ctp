@@ -4,6 +4,7 @@
     use Cake\Core\Configure\Engine\PhpConfig;
 	$siteBaseURL = Configure::read('SITE_BASE_URL'); //rasu
     $currency = Configure::read('CURRENCY_TYPE');
+	$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 	//pr($product);
 ?>
 <style>dt{width: 200px;}dd{padding-left: 20px;}</style>
@@ -82,7 +83,7 @@
 		</dd>
 		<dt><?php echo __('Additional Models'); ?></dt>
 		<dd>
-			<?php echo $product['additional_model']; ?>
+			<?php if(array_key_exists('additional_model',$product)){echo $product['additional_model'];} ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Manufacturing Date'); ?></dt>
@@ -153,10 +154,10 @@
 				$imageName = $product['image'] ;
 				$absoluteImagePath = $imageDir.$imageName;
 				$imageURL = "/thumb_no-image.png";
-				if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
+				if(!empty($imageName)){
 					//$applicationURL = $this->html->url('/', true);
 					//$imageURL = $applicationURL."files/product/image/".$product['id']."/thumb_$imageName";
-					$imageURL = "$siteBaseURL/files/Products/image/".$product['id'] ."/$imageName";
+					$imageURL = "$adminDomainURL/files/Products/image/".$product['id'] ."/thumb_"."$imageName";
 				}
 					
 					echo $this->Html->link(

@@ -1,6 +1,7 @@
 <?php
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
+$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 //echo ADMINISTRATORS;die;
 ?>
 <style>
@@ -152,9 +153,9 @@ use Cake\Core\Configure\Engine\PhpConfig;
 		$imageName =  $centralStock->image;
 		$absoluteImagePath = $imageDir.$imageName;
 		$LargeimageURL = $imageURL = "/thumb_no-image.png";
-		if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-			$imageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/$imageName"; //rasu
-			$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$centralStock->id."/vga_"."$imageName"; //rasu
+		if(!empty($imageName)){
+			$imageURL = "{$adminDomainURL}/files/Products/image/".$centralStock->id."/thumb_"."$imageName"; //rasu
+			$LargeimageURL = "{$adminDomainURL}/files/Products/image/".$centralStock->id."/vga_"."$imageName"; //rasu
 		}
 		$productQuantity = "";
 		$productPrice = $centralStock->selling_price;

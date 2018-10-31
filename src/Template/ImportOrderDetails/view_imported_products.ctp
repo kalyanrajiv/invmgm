@@ -5,6 +5,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 <?php $currency = Configure::read('CURRENCY_TYPE');
 //$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
 $siteBaseURL = Configure::read('SITE_BASE_URL');
+$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 $createdBy = '';
 //pr($referenceArr);die;
 $referenceStatus = $referenceArr['status'];
@@ -54,9 +55,9 @@ if(array_key_exists($referenceArr['user_id'],$users)){
 			$imageName = $productArr[$importedProduct->product_id]['image'];
 			$absoluteImagePath = $imageDir.$imageName;
 			$LargeimageURL = $imageURL = "/thumb_no-image.png";
-			if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-				$imageURL = "{$siteBaseURL}/files/Products/image/".$importedProduct->product_id."/$imageName";
-				$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$importedProduct->product_id."/vga_"."$imageName";
+			if(!empty($imageName)){
+				$imageURL = "{$adminDomainURL}/files/Products/image/".$importedProduct->product_id."/thumb_"."$imageName";
+				$LargeimageURL = "{$adminDomainURL}/files/Products/image/".$importedProduct->product_id."/vga_"."$imageName";
 			}
 			?>
 		<tr>

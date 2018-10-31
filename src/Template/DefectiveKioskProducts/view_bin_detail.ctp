@@ -4,6 +4,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 $currency = Configure::read('CURRENCY_TYPE');
 //$this->Number->addFormat('BRL', array('before' => "$currency ", 'negative'=>'-','zero'=>"$currency 0.00", 'escape' => false));
 $siteBaseURL = Configure::read('SITE_BASE_URL');
+$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 $createdBy = '';
 $referenceStatus = $referenceArr['status'];
 $createdOn = date('M jS, Y',strtotime($referenceArr['created']));//$this->Time->format('M jS, Y',$referenceArr['created'],null,null);
@@ -48,9 +49,9 @@ if(array_key_exists($referenceArr['user_id'],$users)){
 			$absoluteImagePath = $imageDir.$imageName;
 			
 			$LargeimageURL = $imageURL = "/thumb_no-image.png";
-			if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-				$imageURL = "{$siteBaseURL}/files/Products/image/".$defectiveTransient->product_id."/$imageName";
-				$LargeimageURL = "{$siteBaseURL}/files/Products/image/".$defectiveTransient->product_id."/vga_"."$imageName";
+			if(!empty($imageName)){
+				$imageURL = "{$adminDomainURL}/files/Products/image/".$defectiveTransient->product_id."/thumb_"."$imageName";
+				$LargeimageURL = "{$adminDomainURL}/files/Products/image/".$defectiveTransient->product_id."/vga_"."$imageName";
 				 
 			}
 			

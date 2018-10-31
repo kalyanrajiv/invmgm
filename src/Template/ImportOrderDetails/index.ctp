@@ -17,6 +17,7 @@
 }
 </style>
 <?php	$sessionKioskId = $this->request->Session()->read('kiosk_id');
+	$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
 	extract($this->request->query);
 	if(!isset($search_kw)){$search_kw = "";}
 	$searchKw = $categoryQuery = $categoryqryStr = $reference = '';
@@ -165,8 +166,8 @@
 			$LargeimageURL = $imageURL = "/thumb_no-image.png";
             //echo $absoluteImagePath;die;
 			if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
-				$imageURL = "/files/Products/image/".$product->id."/$imageName";
-				$LargeimageURL = "/files/Products/image/".$product->id."/vga_"."$imageName";
+				$imageURL = "{$adminDomainURL}/files/Products/image/".$product->id."/thumb_"."$imageName";
+				$LargeimageURL = "{$adminDomainURL}/files/Products/image/".$product->id."/vga_"."$imageName";
 			}
 			$original_quantity = '';
             //pr($product->id);

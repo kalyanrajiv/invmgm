@@ -1,4 +1,6 @@
- 
+<?php
+$adminDomainURL = URL_SCHEME.ADMIN_DOMAIN;
+?>
 <div class="categories view">
 	<?php
 	$i =  0;
@@ -34,11 +36,11 @@
 			$largeImageName = 'vga_'.$category->image;
 			$absoluteImagePath = $imageDir.$imageName;
 			$LargeimageURL = $imageURL = "/thumb_no-image.png";
-				if(@readlink($absoluteImagePath) || file_exists($absoluteImagePath)){
+				if(!empty($imageName)){
 					//$applicationURL = $this->html->url('/', true);
 					//$imageURL = $applicationURL."files/product/image/".$product['Product['id."/thumb_$imageName";
-					$imageURL = "$siteBaseURL/files/Categories/image/".$category->id."/$imageName";
-					$LargeimageURL = "$siteBaseURL/files/Categories/image/".$category->id."/"."$largeImageName";
+					$imageURL = "$adminDomainURL/files/Categories/image/".$category->id."/thumb_"."$imageName";
+					$LargeimageURL = "$adminDomainURL/files/Categories/image/".$category->id."/"."$largeImageName";
 				}
 						$groupStr.="\n$(\".group{$i}\").colorbox({rel:'group{$i}'});";
 					echo $this->Html->link(
